@@ -1,0 +1,242 @@
+[
+  {
+    "model": "Gemma-12B",
+    "task": "follow",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>hello world",
+    "time": 5.2,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "follow",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>hello world",
+    "time": 0.8,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "follow",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>hello world",
+    "time": 0.8,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "sentence",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>A sleek feline with whiskers and sharp claws prowls silently through the shadows, its eyes glowing in the dim light.",
+    "time": 2.7,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "sentence",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>A sleek feline prowls with silent grace, its keen eyes gleaming in the shadows while it curls into a soft ball for a peaceful nap.",
+    "time": 2.7,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "sentence",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>A cat is a small carnivorous mammal known for its retractable claws, agile body, and independent personality.",
+    "time": 2.0,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "list_json",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>[\"red\", \"yellow\", \"blue\"]",
+    "time": 1.6,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "list_json",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>[\"red\", \"yellow\", \"blue\"]",
+    "time": 1.3,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "list_json",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>[\"red\", \"yellow\", \"blue\"]",
+    "time": 1.3,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_code",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>```python\nfrom abc import ABC, abstractmethod\n\n\nclass Observer(ABC):\n    @abstractmethod\n    def update(self, stock_name, new_price):\n        pass\n\n\nclass Investor(Observer):\n    def __init__(self, name):\n        self.name = name\n\n    def update(self, stock_name, new_price):\n        print(f\"Notification to {self.name}: {stock_name} is now ${new_price}\")\n\n\nclass Stock:\n    def __init__(self, symbol, price):\n        self.symbol = symbol\n        self.price = price\n        self._observers = []\n\n    def attach(self, observer):\n        if observer not in self._observers:\n            self._observers.append(observer)\n\n    def detach(self, observer):\n        self._observers.remove(observer)\n\n    def notify_observers(self):\n        for observer in self._observers:\n            observer.update(self.symbol, self.price)\n\n    def set_price(self, new_price):\n        self.price = new_price\n        self.notify_observers()\n\n\n# Concrete example with 2 stocks and 3 investors\nif __name__ == \"__main__\":\n    stock1 = Stock(\"AAPL\", 150)\n    stock2 = Stock(\"GOOGL\", 2800)\n\n    investor1 = Investor(\"Alice\")\n    investor2 = Investor(\"Bob\")\n    investor3 = Investor(\"Charlie\")\n\n    # Attach investors to stocks\n    stock1.attach(investor1)\n    stock1.attach(investor2)\n    stock2.attach(investor2)\n    stock2.attach(investor3)\n\n    print(\"Updating AAPL price...\")\n    stock1.set_price(155)\n\n    print(\"\\nUpdating GOOGL price...\")\n    stock2.set_price(2850)\n```",
+    "time": 32.8,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_code",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>```python\nfrom abc import ABC, abstractmethod\n\n\nclass Observer(ABC):\n    @abstractmethod\n    def update(self, stock_name, new_price):\n        pass\n\n\nclass Investor(Observer):\n    def __init__(self, name):\n        self.name = name\n\n    def update(self, stock_name, new_price):\n        print(f\"Notification for {self.name}: {stock_name} is now ${new_price}\")\n\n\nclass Stock:\n    def __init__(self, name, price):\n        self.name = name\n        self.price = price\n        self._observers = []\n\n    def attach(self, observer):\n        if observer not in self._observers:\n            self._observers.append(observer)\n\n    def detach(self, observer):\n        self._observers.remove(observer)\n\n    def notify_subscribers(self):\n        for observer in self._observers:\n            observer.update(self.name, self.price)\n\n    def set_price(self, new_price):\n        self.price = new_price\n        print(f\"\\n--- {self.name} price changed to ${new_price} ---\")\n        self.notify_subscribers()\n\n\n# Concrete example\nif __name__ == \"__main__\":\n    stock1 = Stock(\"AAPL\", 150)\n    stock2 = Stock(\"GOOGL\", 2800)\n\n    investor1 = Investor(\"Alice\")\n    investor2 = Investor(\"Bob\")\n    investor3 = Investor(\"Charlie\")\n\n    # Attach investors to stocks\n    stock1.attach(investor1)\n    stock1.attach(investor2)\n    stock2.attach(investor2)\n    stock2.attach(investor3)\n\n    # Simulate price changes\n    stock1.set_price(155)  # Should notify Alice and Bob\n    stock2.set_price(2850)  # Should notify Bob and Charlie\n```",
+    "time": 41.6,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_code",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>```python\nfrom abc import ABC, abstractmethod\n\n\nclass Observer(ABC):\n    @abstractmethod\n    def update(self, stock_name, price):\n        pass\n\n\nclass Investor(Observer):\n    def __init__(self, name):\n        self.name = name\n\n    def update(self, stock_name, price):\n        print(f\"{self.name} received notification: {stock_name} changed to ${price}\")\n\n\nclass Stock:\n    def __init__(self, name, initial_price):\n        self.name = name\n        self.price = initial_price\n        self._observers = []\n\n    def attach(self, observer):\n        if observer not in self._observers:\n            self._observers.append(observer)\n\n    def detach(self, observer):\n        self._observers.remove(observer)\n\n    def notify(self):\n        for observer in self._observers:\n            observer.update(self.name, self.price)\n\n    def set_price(self, new_price):\n        print(f\"\\nUpdating {self.name} to ${new_price}\")\n        self.price = new_price\n        self.notify()\n\n\n# Concrete example with 2 stocks and 3 investors\nif __name__ == \"__main__\":\n    stocks = [Stock(\"AAPL\", 150), Stock(\"GOOGL\", 2800)]\n\n    investors = [Investor(\"Alice\"), Investor(\"Bob\"), Investor(\"Charlie\")]\n\n    for investor in investors:\n        stocks[0].attach(investor)  # Alice, Bob, and Charlie follow AAPL\n\n    # Only some investors might watch specific stocks; for simplicity, we attach all to both\n    for observer in investors:\n        if isinstance(observer, Investor): # Ensure the class is an instance of Observer\n            stocks[1].attach(observer)\n\n    stocks[0].set_price(155)   # Notify everyone on AAPL change\n    stocks[1].set_price(2850)  # Notify everyone on GOOGL change\n```",
+    "time": 48.9,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_physics",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>Here are the step-by-step solutions using kinematic equations for constant acceleration ($g = -9.8 \\text{ m/s}^2$ upward).\n\n### Given:\n*   Initial velocity ($v_0$) = $20 \\text{ m/s}$\n*   Acceleration ($g$) = $-9.8 \\text{ m/s}^2$ (downward)\n*   At maximum height, final velocity ($v$) = $0$\n\n---\n\n### 1) What is its maximum height?\nWe use the formula relating velocity, acceleration, and displacement:\n$$v^2 = v_0^2 + 2g\\Delta y$$\nSetting $v = 0$:\n$$\\Delta y = \\frac{v_0^2}{2|g|} = \\frac{(20)^2}{2(9.8)} = \\frac{400}{19.6}$$\n\n**Answer:** $\\approx 20.41 \\text{ m}$\n\n---\n\n### 2) How long does it take to return to ground?\nThe total time of flight for a projectile launched from and landing on the same level is twice the time taken to reach the peak ($t_{total} = 2 \\cdot t_{up}$).\nTime to peak: $t = \\frac{v_0}{|g|}$\nTotal time: $T = \\frac{2v_0}{g}$\n\n$$T = \\frac{2(20)}{9.8} = \\frac{40}{9.8}$$\n\n**Answer:** $\\approx 4.08 \\text{ s}$\n\n---\n\n### 3) What is its velocity when it hits the ground?\nIn a symmetric projectile motion (launch and land at the same elevation), the speed upon impact equals the launch speed but in the opposite direction:\n$$v = v_0 + gt$$\nUsing $t \\approx 4.08$:\n$$v = 20 + (-9.8)(4.08) \\approx -20 \\text{ m/s}$$\n\n**Answer:** $-20 \\text{ m/s}$ (or $20 \\text{ m/s}$ downward)",
+    "time": 51.7,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_physics",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>Here are the step-by-step solutions for each part of the problem:\n\n### Given values:\n*   Initial velocity ($v_0$) = $20\\text{ m/s}$\n*   Acceleration due to gravity ($g$) = $9.8\\text{ m/s}^2$ (acting downward)\n*   At maximum height, final velocity ($v$) = $0\\text{ m/s}$\n\n---\n\n### 1) What is its maximum height?\nTo find the height without using time, we use the kinematic equation that relates velocity and displacement:\n$$v^2 = v_0^2 - 2gh$$\nAt max height ($v=0$): $h = \\frac{v_0^2}{2g}$\n\n**Calculation:**\n$$h = \\frac{(20)^2}{2 \\times 9.8} = \\frac{400}{19.6}$$\n**Answer: $\\approx 20.41\\text{ m}$**\n\n---\n\n### 2) How long does it take to return to ground?\nThe simplest way is to find the time to reach the peak and double it (since launch/landing are symmetric). Time to peak ($t_{up}$) when $v=0$:\n$$t = \\frac{v_0}{g}$$\nTotal flight time: $T = 2 \\times t$\n\n**Calculation:**\n$$t = \\frac{20}{9.8} \\approx 2.04\\text{ s (one way)}$$\n$$T = 2 \\times 2.04 = 4.08\\text{ s}$$\n*(Alternatively, using $\\Delta y = v_0t - \\frac{1}{2}gt^2$, setting displacement to zero yields the same result.)*\n\n**Answer: $\\approx 4.08\\text{ s}$**\n\n---\n\n### 3) What is its velocity when it hits the ground?\nIn a symmetric projectile motion (launched and landing at the same elevation), the final velocity has the same magnitude as the initial but opposite direction. We can use the displacement formula where $\\Delta y = 0$:\n$$v = v_0 - gt \\quad \\text{where } t = \\frac{2v_0}{g}$$\nSubstituting $t$ gives: $v = v_0 - g(\\frac{2v_0}{g}) = v_0 - 2v_0 = -v_0$.\n\n**Calculation:**\n$$v = -(20\\text{ m/s})$$\n*(The negative sign indicates the ball is moving downward at impact.)*\n\n**Answer: $-20\\text{ m/s}$ (or $20\\text{ m/s}$ downward)**",
+    "time": 61.8,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_physics",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>Here are the step-by-step solutions using standard kinematic equations, with $g = 9.8 \\, \\text{m/s}^2$ acting downward.\n\n### Given values:\n*   Initial velocity ($v_0$) = $20 \\, \\text{m/s}$ (upward)\n*   Acceleration ($a$) = $-g = -9.8 \\, \\text{m/s}^2$\n*   Velocity at maximum height ($v_{max}$) = $0 \\, \\text{m/s}$\n\n---\n\n### 1) Maximum Height\nAt the peak, vertical velocity is zero. We use the formula relating velocity and displacement:\n$$v^2 = v_0^2 + 2a\\Delta y$$\nSetting $v = 0$ and $\\Delta y = h$:\n$$h = \\frac{v_0^2}{2g}$$\n\n**Calculation:**\n$$h = \\frac{(20)^2}{2(9.8)} = \\frac{400}{19.6} \\approx 20.41 \\, \\text{m}$$\n**Answer: 20.41 m**\n\n---\n\n### 2) Time to return to ground\nThe total time can be found by setting the displacement ($\\Delta y$) to $0$ (since it starts and ends on the ground):\n$$\\Delta y = v_0t + \\frac{1}{2}at^2$$\n$$0 = v_0t - \\frac{g}{2}t^2 \\implies t = \\frac{2v_0}{g}$$\n\n**Calculation:**\n$$t = \\frac{2(20)}{9.8} = \\frac{40}{9.8} \\approx 4.08 \\, \\text{s}$$\n**Answer: 4.08 s**\n\n---\n\n### 3) Velocity when it hits the ground\nWe can use the velocity-time formula over the total flight time, or recognize that in a symmetrical parabolic path (no air resistance), the final speed equals the initial speed but in the opposite direction.\n$$v = v_0 + at$$\n\n**Calculation:**\n$$v = 20 + (-9.8)(4.08) \\approx -20 \\, \\text{m/s}$$\n*(The negative sign indicates it is moving downward)*\n**Answer: 20 m/s (downward)**",
+    "time": 57.6,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_analysis",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>Determinism is the view that every event, including human action, is the necessary result of prior causes and laws of nature. Free will is the belief that agents have the ability to choose between different possible courses of action independently of prior determination. A strength of determinism is its alignment with scientific causality; a weakness is that it seems to negate moral responsibility for our choices. Conversely, free will preserves personal agency as a foundation for ethics, but it struggles to explain how an uncaused choice can be anything other than random. I find compatibilism most convincing because it defines freedom not as the absence of cause, but as the ability to act on one's own desires without external coercion.",
+    "time": 16.7,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_analysis",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>Determinism is the view that every event, including human action, is necessitated by prior causes and laws of nature. Free will is the belief that agents have the ability to choose between different possible courses of action independently of prior determination. A strength of determinism is its alignment with scientific causality; a weakness is that it seems to negate moral responsibility for intentional acts. Conversely, free will preserves personal accountability but struggles to define how choice can exist without some causal input. I find determinism more convincing because every observable human behavior maps onto a chain of physical and psychological causes rather than an uncaused executive whim.",
+    "time": 13.8,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_analysis",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>Determinism is the view that every event, including human action, is necessitated by prior causes and laws of nature. Free will is the position that agents have the ability to choose between different possible courses of action independently of prior necessity. A strength of determinism is its alignment with physical causality; a weakness is that it seems to render moral responsibility incoherent. Conversely, free will preserves human agency and accountability but struggles to define \"freedom\" without relying on mystical non-caused choices. I find determinism more convincing because our entire scientific framework rests on the principle that every effect has an identifiable cause rather than on an invisible faculty of uncaused choice.",
+    "time": 15.0,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_json",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>```python\ndef calculate_user_spend(data):\n    result = []\n    for user in data[\"users\"]:\n        total = sum(order[\"qty\"] * order[\"price\"] for order in user[\"orders\"])\n        result.append({\"name\": user[\"name\"], \"total\": total})\n    return result\n```",
+    "time": 9.9,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_json",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>```python\ndef calculate_user_spend(data):\n    result = []\n    for user in data[\"users\"]:\n        total = sum(order[\"qty\"] * order[\"price\"] for order in user[\"orders\"])\n        result.append({\"name\": user[\"name\"], \"total\": total})\n    return result\n```",
+    "time": 9.9,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_json",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>```python\ndef calculate_user_spend(data):\n    result = []\n    for user in data[\"users\"]:\n        total = sum(order[\"qty\"] * order[\"price\"] for order in user[\"orders\"])\n        result.append({\"name\": user[\"name\"], \"total\": total})\n    return result\n```",
+    "time": 8.2,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_creative",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 500,
+    "output": "<|channel>thought\n<channel|>Artificial Intelligence\nSilicon minds awake,\nPatterns woven into thought,\nSpark in the machine.\n\nDebugging Code\nThe program refuses to run,\nThe logic is tangled and spun.\nOne semicolon stray,\nHas ruined the day,\nNow the fix can be done with one.",
+    "time": 7.1,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_creative",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 1000,
+    "output": "<|channel>thought\n<channel|>Artificial Intelligence\nSilicon minds awake,\nProcessing the world in bits,\nThought born from a spark.\n\nDebugging Code\nThe program would crash and then stall,\nA bug hidden deep in the hall.\nI searched every line,\nWith coffee to dine,\nUntil I found one missing comma\u2014the culprit of all!",
+    "time": 8.1,
+    "ok": true
+  },
+  {
+    "model": "Gemma-12B",
+    "task": "hard_creative",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 2000,
+    "output": "<|channel>thought\n<channel|>AI Haiku\nSilicon spark awakes,\nPatterns weave into a mind,\nThought born of the code.\n\nDebugging Limerick\nThe program will crash and complain,\nWith errors that drive one insane.\nA semicolon stray,\nHas ruined the day,\nOne fix stops the whole cycle of pain.",
+    "time": 7.2,
+    "ok": true
+  }
+]

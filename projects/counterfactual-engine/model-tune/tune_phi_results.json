@@ -1,0 +1,352 @@
+[
+  {
+    "model": "Phi-4-mini",
+    "task": "follow",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 150,
+    "output": "Hello World",
+    "time": 1.7,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "follow",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 300,
+    "output": "Hello World",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "follow",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 500,
+    "output": "Hello World",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "follow",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 800,
+    "output": "Hello World",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "follow",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 1000,
+    "output": "hello world",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "list_json",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 150,
+    "output": "```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.5,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "list_json",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 300,
+    "output": "```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "list_json",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 500,
+    "output": "```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "list_json",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 800,
+    "output": "```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "list_json",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 1000,
+    "output": "```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "sentence",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 150,
+    "output": "A sleek, black feline with piercing green eyes prowls silently through the moonlit garden.",
+    "time": 0.6,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "sentence",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 300,
+    "output": "A sleek, black feline lounges lazily on the windowsill under the warm glow of afternoon sunlight.",
+    "time": 0.6,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "sentence",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 500,
+    "output": "A sleek, orange tabby curls up on the windowsill basking in the afternoon sun.",
+    "time": 0.6,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "sentence",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 800,
+    "output": "A sleek, black feline gracefully prowls its territory at dusk.",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "sentence",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 1000,
+    "output": "A sleek, orange tabby meows gently as it prowls the quiet night garden under a full moon.",
+    "time": 0.6,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "explain",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 150,
+    "output": "Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem until it reaches a base case, which stops further recursion and provides an answer for that specific instance.\n\nIt allows problems with complex structures or repetitive tasks like tree traversals (e.g., searching in binary trees) to be solved more elegantly by breaking them down into simpler subproblems.",
+    "time": 2.0,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "explain",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 300,
+    "output": "Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem until it reaches a base case, which stops further recursion and provides an answer for that specific instance.\n\nIt allows problems with complex structures or repetitive tasks (like traversing trees) to be broken down into simpler subproblems in manageable chunks.",
+    "time": 1.7,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "explain",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 500,
+    "output": "Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem until it reaches a base case, which stops further recursion and begins returning values back up through previous recursive calls.\n\nIt allows for cleaner code when solving problems that can be broken down into simpler subproblems with overlapping structures.",
+    "time": 1.6,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "explain",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 800,
+    "output": "Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem, often involving base cases that stop further recursion and recursive steps for processing complex problems incrementally.\n\nIn essence, it breaks down big tasks into simpler ones by repeatedly applying these principles until reaching easily solvable conditions known as terminal or trivial cases.",
+    "time": 1.7,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "explain",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 1000,
+    "output": "Recursion is a programming technique where a function calls itself to solve smaller instances of the same problem until it reaches base conditions that can be solved directly, allowing for simplification or iterative solving approaches within nested functions.\n\nIt enables programmers to write cleaner and more concise code when dealing with repetitive tasks like traversing data structures (like trees) by breaking down complex problems into simpler ones recursively.",
+    "time": 1.8,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "palindrome",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 150,
+    "output": "def is_palindrome(s):\n    s = ''.join(c for c in s.lower() if c.isalnum())\n    return s == s[::-1]",
+    "time": 0.9,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "palindrome",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 300,
+    "output": "def is_palindrome(s):\n    s = ''.join(c for c in s.lower() if c.isalnum())\n    return s == s[::-1]",
+    "time": 0.9,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "palindrome",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 500,
+    "output": "def is_palindrome(s):\n    s = ''.join(c for c in s.lower() if c.isalnum())\n    return s == s[::-1]",
+    "time": 0.9,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "palindrome",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 800,
+    "output": "def is_palindrome(s):\n    s = ''.join(c for c in s.lower() if c.isalnum())\n    return s == s[::-1]",
+    "time": 0.9,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "palindrome",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 1000,
+    "output": "```python\ndef is_palindrome(s):\n    s = ''.join(c for c in s.lower() if c.isalnum())\n    return s == s[::-1]\n```",
+    "time": 1.0,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "translate",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 150,
+    "output": "Le renard brun rapide saute par-dessus le chien paresseux.",
+    "time": 0.5,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "translate",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 300,
+    "output": "Le renard brun rapide saute par-dessus le chien paresseux.",
+    "time": 0.5,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "translate",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 500,
+    "output": "Le renard brun rapide saute par-dessus le chien paresseux.",
+    "time": 0.5,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "translate",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 800,
+    "output": "Le rapide renard brun saute par-dessus le chien paresseux.",
+    "time": 0.5,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "translate",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 1000,
+    "output": "Le renard brun rapide saute par-dessus le chien paresseux.",
+    "time": 0.5,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "solve",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 150,
+    "output": "$1",
+    "time": 0.3,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "solve",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 300,
+    "output": "$1",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "solve",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 500,
+    "output": "$1",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "solve",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 800,
+    "output": "$1",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "Phi-4-mini",
+    "task": "solve",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 1000,
+    "output": "6",
+    "time": 0.2,
+    "ok": true
+  }
+]

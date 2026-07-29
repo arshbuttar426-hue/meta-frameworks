@@ -1,0 +1,19 @@
+{
+  "system_name": "Aethelgard Registry",
+  "current_cycle": 10,
+  "world_name": "Virosea Continuum",
+  "population": {
+    "active": 33,
+    "fading": 0,
+    "mythic": 0,
+    "deceased": 0
+  },
+  "laws_active": 17,
+  "agent_status": {
+    "architect": "satisfied",
+    "engineer": "satisfied",
+    "instigator": "satisfied"
+  },
+  "divergence_index": 0.09,
+  "recommended_action": "Check the Gazette and Observatory for details."
+}

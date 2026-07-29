@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="DREAMSWAP — The Machine Remembers. Stories, systems, machines, and forgotten worlds.">
+<meta name="theme-color" content="#DED8D0">
+<title>DREAMSWAP — THE MACHINE REMEMBERS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --bg:#DED8D0;
+  --bg-dark:#111111;
+  --text:#2B2B2B;
+  --text-dark:#c4b8a5;
+  --line:#1A1A1A;
+  --line-dark:#333333;
+  --muted:#666666;
+  --accent:#A84D32;
+  --paper:#F5E8C8;
+  --mono:'Space Mono',monospace;
+  --display:'Playfair Display',serif;
+}
+
+body{
+  font-family:var(--mono);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.5;
+  font-size:12px;
+  min-height:100vh;
+}
+
+body.dark{
+  --bg:var(--bg-dark);
+  --text:var(--text-dark);
+  --line:var(--line-dark);
+}
+
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;background:none;border:none;cursor:pointer}
+
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:9999;
+  opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.line{height:1px;background:var(--line);width:100%}
+.vline{width:1px;background:var(--line);height:100%;position:absolute}
+
+#app{min-height:100vh;position:relative;z-index:2}
+.view{display:none}
+.view.active{display:block}
+
+/* NAVIGATION */
+#global-nav{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:100;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:16px 32px;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+}
+#global-nav .nav-left,#global-nav .nav-right{display:flex;gap:24px}
+#global-nav a{
+  font-size:11px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  transition:opacity 0.2s;
+}
+#global-nav a:hover{opacity:0.5}
+#global-nav .nav-brand{
+  font-size:14px;
+  letter-spacing:4px;
+  font-weight:700;
+}
+
+/* HOME */
+#view-home{min-height:100vh;padding:80px 32px 64px}
+.home-hero{
+  display:grid;
+  grid-template-columns:1fr 2fr;
+  gap:0;
+  border:1px solid var(--line);
+  margin-bottom:32px;
+}
+.home-hero-text{
+  padding:48px 32px;
+  border-right:1px solid var(--line);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.home-hero-text h1{
+  font-size:28px;
+  font-family:var(--display);
+  font-weight:400;
+  margin-bottom:16px;
+  line-height:1.2;
+}
+.home-hero-text p{
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.home-hero-image{
+  position:relative;
+  min-height:400px;
+  background:var(--bg);
+  overflow:hidden;
+}
+.home-hero-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.home-crosshair{
+  position:absolute;
+  bottom:16px;
+  right:16px;
+  font-size:9px;
+  letter-spacing:1px;
+  color:var(--muted);
+  text-align:right;
+}
+.home-crosshair::before{
+  content:'+';
+  font-size:16px;
+  display:block;
+  margin-bottom:4px;
+}
+
+.home-section-label{
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+  color:var(--muted);
+}
+
+/* ARCHIVE GRID */
+#archive-grid{
+  display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-auto-rows:minmax(120px,auto);
+  gap:1px;
+  background:var(--line);
+  border:1px solid var(--line);
+}
+#archive-grid > *{background:var(--bg)}
+
+.archive-item{
+  position:relative;
+  overflow:hidden;
+  cursor:pointer;
+  min-height:150px;
+}
+.archive-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform 0.6s ease;
+}
+.archive-item:hover img{transform:scale(1.02)}
+.archive-item:nth-child(1){grid-column:span 7;grid-row:span 2}
+.archive-item:nth-child(2){grid-column:span 5;grid-row:span 2}
+.archive-item:nth-child(3){grid-column:span 4;grid-row:span 2}
+.archive-item:nth-child(4){grid-column:span 3;grid-row:span 2}
+.archive-item:nth-child(5){grid-column:span 5;grid-row:span 2}
+.archive-item:nth-child(6){grid-column:span 4;grid-row:span 2}
+.archive-item:nth-child(n+7){grid-column:span 3;grid-row:span 2}
+
+.archive-overlay{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  padding:16px;
+  background:linear-gradient(0deg,rgba(0,0,0,0.7) 0%,transparent 100%);
+  color:#fff;
+  opacity:0;
+  transition:opacity 0.3s;
+}
+.archive-item:hover .archive-overlay{opacity:1}
+.archive-overlay .ao-archive{
+  font-size:9px;
+  letter-spacing:1px;
+  opacity:0.6;
+  margin-bottom:4px;
+}
+.archive-overlay .ao-title{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:1px;
+}
+.archive-overlay .ao-meta{
+  font-size:9px;
+  opacity:0.6;
+  margin-top:4px;
+}
+
+/* EVIDENCE ROOM */
+#view-evidence{padding:80px 0 64px}
+.evidence-nav{
+  display:flex;
+  justify-content:space-between;
+  padding:16px 32px;
+  border-bottom:1px solid var(--line);
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+.evidence-nav button{letter-spacing:2px}
+.evidence-nav button:hover{opacity:0.5}
+
+.evidence-layout{
+  display:grid;
+  grid-template-columns:1fr 2fr;
+  min-height:60vh;
+}
+.evidence-meta{
+  padding:32px;
+  border-right:1px solid var(--line);
+}
+.evidence-meta .ev-archive{
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.evidence-meta h1{
+  font-family:var(--display);
+  font-size:32px;
+  font-weight:400;
+  margin-bottom:8px;
+  line-height:1.2;
+}
+.evidence-meta .ev-year{
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:24px;
+}
+.evidence-meta .ev-desc{
+  font-size:12px;
+  line-height:1.7;
+  margin-bottom:32px;
+}
+.evidence-meta .ev-specs{
+  border-top:1px solid var(--line);
+  padding-top:16px;
+}
+.evidence-meta .ev-spec{
+  display:flex;
+  justify-content:space-between;
+  padding:8px 0;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  border-bottom:1px solid rgba(26,26,26,0.1);
+}
+.evidence-meta .ev-spec span:last-child{
+  text-transform:none;
+  letter-spacing:0;
+  color:var(--muted);
+}
+
+.evidence-visual{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+}
+.evidence-hero{
+  flex:1;
+  position:relative;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  min-height:400px;
+}
+.evidence-hero img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.evidence-details{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:var(--line);
+}
+.evidence-details > *{background:var(--bg)}
+.evidence-detail{
+  min-height:200px;
+  position:relative;
+}
+.evidence-detail img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.evidence-detail-caption{
+  position:absolute;
+  bottom:8px;
+  left:8px;
+  font-size:9px;
+  letter-spacing:1px;
+  color:#fff;
+  background:rgba(0,0,0,0.6);
+  padding:4px 8px;
+}
+
+/* BLUEPRINT SECTION */
+.blueprint-grid{
+  background:var(--paper);
+  padding:32px;
+  background-image:
+    linear-gradient(rgba(26,26,26,0.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(26,26,26,0.05) 1px,transparent 1px);
+  background-size:20px 20px;
+}
+.blueprint-grid h3{
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:24px;
+  color:var(--muted);
+}
+.blueprint-images{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--line);
+}
+.blueprint-images > *{background:var(--paper)}
+.blueprint-item{
+  min-height:200px;
+  position:relative;
+}
+.blueprint-item img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  filter:sepia(0.2) contrast(0.9);
+}
+
+/* ARTISTS DIRECTORY */
+#view-artists{padding:120px 32px 64px;max-width:1000px;margin:0 auto}
+#view-artists h2{
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:48px;
+  text-align:center;
+}
+.artist-item{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:baseline;
+  padding:24px 0;
+  border-top:1px solid var(--line);
+  cursor:pointer;
+  transition:background 0.2s;
+}
+.artist-item:hover{background:rgba(26,26,26,0.03)}
+.artist-item:last-child{border-bottom:1px solid var(--line)}
+.artist-item .artist-name{
+  font-family:var(--display);
+  font-size:24px;
+  font-weight:400;
+}
+.artist-item .artist-theme{
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+/* ABOUT */
+#view-about{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:120px 32px;
+  text-align:center;
+}
+.about-box{
+  max-width:500px;
+  padding:48px;
+  border:1px solid var(--line);
+}
+.about-box h2{
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:32px;
+}
+.about-box p{
+  font-size:14px;
+  line-height:2;
+  font-family:var(--display);
+  font-style:italic;
+  margin-bottom:48px;
+}
+.about-box .about-footer{
+  font-size:10px;
+  letter-spacing:2px;
+  color:var(--muted);
+  line-height:2;
+}
+
+/* ATTRIBUTIONS */
+#view-attributions{padding:120px 32px 64px;max-width:900px;margin:0 auto}
+#view-attributions h2{
+  font-size:10px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:16px;
+  text-align:center;
+}
+#view-attributions .attr-intro{
+  font-size:12px;
+  color:var(--muted);
+  text-align:center;
+  margin-bottom:48px;
+  font-style:italic;
+}
+.attr-item{
+  padding:20px 0;
+  border-top:1px solid var(--line);
+  cursor:pointer;
+}
+.attr-item:last-child{border-bottom:1px solid var(--line)}
+.attr-item-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+}
+.attr-item .attr-title{font-size:13px;font-weight:700}
+.attr-item .attr-artist{font-size:10px;color:var(--muted);letter-spacing:1px}
+.attr-item-body{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.4s ease;
+  margin-top:0;
+}
+.attr-item.open .attr-item-body{max-height:200px;margin-top:16px}
+.attr-item-content{
+  font-size:11px;
+  line-height:1.8;
+  color:var(--muted);
+  padding:16px;
+  background:rgba(26,26,26,0.03);
+  border-left:2px solid var(--line);
+}
+.attr-item-content a{
+  color:var(--accent);
+  border-bottom:1px solid rgba(168,77,50,0.3);
+}
+
+/* FOOTER */
+.global-footer{
+  padding:32px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  font-size:10px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.global-footer .footer-motto{font-weight:700;color:var(--text)}
+
+/* TRANSITION */
+#transition-overlay{
+  position:fixed;
+  inset:0;
+  background:var(--line);
+  z-index:9998;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.3s;
+}
+#transition-overlay.active{opacity:1;pointer-events:all}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .home-hero{grid-template-columns:1fr}
+  .home-hero-text{border-right:none;border-bottom:1px solid var(--line)}
+  .evidence-layout{grid-template-columns:1fr}
+  .evidence-meta{border-right:none;border-bottom:1px solid var(--line)}
+  #archive-grid{grid-template-columns:1fr 1fr 1fr}
+  .archive-item:nth-child(n){grid-column:span 1;grid-row:span 1}
+  .archive-item:nth-child(1){grid-column:span 2}
+  #global-nav{padding:12px 16px;flex-wrap:wrap;gap:8px}
+  #global-nav .nav-left,#global-nav .nav-right{gap:12px}
+}
+
+</style>
+</head>
+<body>
+
+<div id="transition-overlay"></div>
+
+<nav id="global-nav">
+  <div class="nav-left">
+    <a href="#" data-nav="home">Home</a>
+    <a href="#" data-nav="archive">Archive</a>
+    <a href="#" data-nav="artists">Artists</a>
+  </div>
+  <div class="nav-brand">DREAMSWAP</div>
+  <div class="nav-right">
+    <a href="#" data-nav="attributions">Attributions</a>
+    <a href="#" data-nav="about">About</a>
+  </div>
+</nav>
+
+<div id="app">
+
+  <section class="view active" id="view-home">
+    <div class="home-hero">
+      <div class="home-hero-text">
+        <h1>THE MACHINE REMEMBERS</h1>
+        <p>Stories, systems, machines, and forgotten worlds.</p>
+      </div>
+      <div class="home-hero-image" id="home-hero-image">
+        <div class="home-crosshair">
+          ARCHIVE 001<br>36.7783° N<br>119.4179° W
+        </div>
+      </div>
+    </div>
+    <div class="home-section-label">Selected Works ↓</div>
+    <div id="home-grid"></div>
+  </section>
+
+  <section class="view" id="view-archive">
+    <div style="padding:120px 32px 32px">
+      <div class="home-section-label" style="margin-bottom:24px">All Works <span id="archive-count"></span></div>
+      <div id="archive-grid"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-evidence">
+    <div class="evidence-nav">
+      <button id="ev-back">← Archive</button>
+      <div>
+        <button id="ev-prev">Prev</button>
+        <span style="margin:0 12px;opacity:0.3">/</span>
+        <button id="ev-next">Next</button>
+      </div>
+    </div>
+    <div class="evidence-layout">
+      <div class="evidence-meta" id="evidence-meta"></div>
+      <div class="evidence-visual">
+        <div class="evidence-hero" id="evidence-hero"></div>
+        <div class="evidence-details" id="evidence-details"></div>
+      </div>
+    </div>
+    <div class="blueprint-grid" id="blueprint-section"></div>
+  </section>
+
+  <section class="view" id="view-artists">
+    <h2>Artists</h2>
+    <div id="artists-list"></div>
+  </section>
+
+  <section class="view" id="view-attributions">
+    <h2>Attributions</h2>
+    <p class="attr-intro">Images sourced from Wikimedia Commons under CC0 or CC-BY licenses. CSS-generated compositions are original to DREAMSWAP.</p>
+    <div id="attributions-list"></div>
+  </section>
+
+  <section class="view" id="view-about">
+    <div class="about-box">
+      <h2>Archive Record</h2>
+      <p>DREAMSWAP<br><br>An ongoing attempt to document imaginary systems, forgotten machines, impossible economies, and synthetic civilizations.</p>
+      <div class="about-footer">
+        DREAMSWAP<br>EST. 2026<br><br>ALL MEMORY DECAYS
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="global-footer">
+  <div>DREAMSWAP EST. 2026</div>
+  <div class="footer-motto">ALL MEMORY DECAYS</div>
+  <div id="footer-context">— home —</div>
+</footer>
+
+<script>
+const ARCHIVE = {
+  "artists": [
+    {
+      "id": "melcher",
+      "name": "MELCHER",
+      "theme": "Brutalist Machines",
+      "artworks": [
+        {
+          "id": "w00",
+          "archiveNum": "ARCHIVE 001",
+          "title": "Brutalist - Northfield, MN - Carleton College (Gou",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/c/ce/Brutalist_-_Northfield%2C_MN_-_Carleton_College_%28Gould_Library%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Brutalist_-_Northfield,_MN_-_Carleton_College_(Gould_Library).jpg",
+          "credit": "Bmzuckerman",
+          "license": "CC BY 4.0"
+        },
+        {
+          "id": "w04",
+          "archiveNum": "ARCHIVE 005",
+          "title": "Yale School of Architecture, Brutalist stairwell, ",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/4/4c/Yale_School_of_Architecture%2C_Brutalist_stairwell%2C_2018.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Yale_School_of_Architecture,_Brutalist_stairwell,_2018.jpg",
+          "credit": "RukshanV",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "id": "w08",
+          "archiveNum": "ARCHIVE 009",
+          "title": "Industrial Washing Factory Machinery -setup 1999",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Industrial_Washing_Factory_Machinery_-setup_1999.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Industrial_Washing_Factory_Machinery_-setup_1999.jpg",
+          "credit": "Jmadhikary",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "id": "w12",
+          "archiveNum": "ARCHIVE 013",
+          "title": "Abstract painting - constructing a dam is must fro",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Abstract_painting_-_constructing_a_dam_is_must_from_the_earth_and_water_series_-_artist_ib_benoh_2003-2004-s.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Abstract_painting_-_constructing_a_dam_is_must_from_the_earth_and_water_series_-_artist_ib_benoh_2003-2004-s.jpg",
+          "credit": "Wardiverde",
+          "license": "CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "id": "elena",
+      "name": "ELENA",
+      "theme": "Natural Systems",
+      "artworks": [
+        {
+          "id": "w01",
+          "archiveNum": "ARCHIVE 002",
+          "title": "Brutalist Architecture example 001",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/9/90/Brutalist_Architecture_example_001.jpeg",
+          "source": "https://commons.wikimedia.org/wiki/File:Brutalist_Architecture_example_001.jpeg",
+          "credit": "Geraldshields11",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "id": "w05",
+          "archiveNum": "ARCHIVE 006",
+          "title": "Alcal\u00e1 de Henares (RPS 14-12-2022) F\u00e1brica de hari",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/7/76/Alcal%C3%A1_de_Henares_%28RPS_14-12-2022%29_F%C3%A1brica_de_harinas_La_Esperanza%2C_molinos_mec%C3%A1nicos.png",
+          "source": "https://commons.wikimedia.org/wiki/File:Alcal\u00e1_de_Henares_(RPS_14-12-2022)_F\u00e1brica_de_harinas_La_Esperanza,_molinos_mec\u00e1nicos.png",
+          "credit": "Raimundo Pastor y Pilar Pastor S\u00e1nchez.",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "id": "w09",
+          "archiveNum": "ARCHIVE 010",
+          "title": "Walnut Industrial Machinery (24057332325)",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Walnut_Industrial_Machinery_%2824057332325%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Walnut_Industrial_Machinery_(24057332325).jpg",
+          "credit": "Paul Sableman",
+          "license": "CC BY 2.0"
+        },
+        {
+          "id": "w13",
+          "archiveNum": "ARCHIVE 014",
+          "title": "Contemporary abstract painting by Ib Benoh 1970s-e",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/1/10/Contemporary_abstract_painting_by_Ib_Benoh_1970s-exhibited_at_Woods_Gerry_gallery_solo_show_in_1980_and_at_the_RISD_museum.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Contemporary_abstract_painting_by_Ib_Benoh_1970s-exhibited_at_Woods_Gerry_gallery_solo_show_in_1980_and_at_the_RISD_museum.jpg",
+          "credit": "Wardiverde",
+          "license": "CC BY-SA 4.0"
+        }
+      ]
+    },
+    {
+      "id": "kaito",
+      "name": "KAITO",
+      "theme": "Eastern Aesthetics",
+      "artworks": [
+        {
+          "id": "w02",
+          "archiveNum": "ARCHIVE 003",
+          "title": "Brutalist architecture, Ashford, Kent",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/c/ca/Brutalist_architecture%2C_Ashford%2C_Kent.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Brutalist_architecture,_Ashford,_Kent.jpg",
+          "credit": "JOHN K  THORNE",
+          "license": "CC0"
+        },
+        {
+          "id": "w06",
+          "archiveNum": "ARCHIVE 007",
+          "title": "Bradford Industrial Museum, machinery hall - geogr",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Bradford_Industrial_Museum%2C_machinery_hall_-_geograph.org.uk_-_8057624.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Bradford_Industrial_Museum,_machinery_hall_-_geograph.org.uk_-_8057624.jpg",
+          "credit": "Alan Murray-Rust",
+          "license": "CC BY-SA 2.0"
+        },
+        {
+          "id": "w10",
+          "archiveNum": "ARCHIVE 011",
+          "title": "Abstract contemporary painting by ib benoh - ameri",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Abstract_contemporary_painting_by_ib_benoh_-_american_flag_number_1%2C_2001.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Abstract_contemporary_painting_by_ib_benoh_-_american_flag_number_1,_2001.jpg",
+          "credit": "Wardiverde",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "id": "w14",
+          "archiveNum": "ARCHIVE 015",
+          "title": "Robert Delaunay - Rythme, Joie de vivre",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/8/8a/Robert_Delaunay_-_Rythme%2C_Joie_de_vivre.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Robert_Delaunay_-_Rythme,_Joie_de_vivre.jpg",
+          "credit": "Robert Delaunay",
+          "license": "Public domain"
+        }
+      ]
+    },
+    {
+      "id": "sara",
+      "name": "SARA",
+      "theme": "Abstract Forms",
+      "artworks": [
+        {
+          "id": "w03",
+          "archiveNum": "ARCHIVE 004",
+          "title": "Brutalist architecture of UMass Dartmouth",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/6/65/Brutalist_architecture_of_UMass_Dartmouth.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Brutalist_architecture_of_UMass_Dartmouth.jpg",
+          "credit": "Kenneth C. Zirkel",
+          "license": "CC BY-SA 4.0"
+        },
+        {
+          "id": "w07",
+          "archiveNum": "ARCHIVE 008",
+          "title": "Industrial & Sugar Machinery (23744205090)",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/3/30/Industrial_%26_Sugar_Machinery_%2823744205090%29.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Industrial_&_Sugar_Machinery_(23744205090).jpg",
+          "credit": "Paul Sableman",
+          "license": "CC BY 2.0"
+        },
+        {
+          "id": "w11",
+          "archiveNum": "ARCHIVE 012",
+          "title": "Abstract gouache painting 'Abstract Landscape nr 1",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/2/21/Abstract_gouache_painting_%27Abstract_Landscape_nr_1.%27_-_watercolor_art_on_paper%2C_made_in_2002_by_Dutch_painter_artist_Fons_Heijnsbroek.tif",
+          "source": "https://commons.wikimedia.org/wiki/File:Abstract_gouache_painting_'Abstract_Landscape_nr_1.'_-_watercolor_art_on_paper,_made_in_2002_by_Dutch_painter_artist_Fons_Heijnsbroek.tif",
+          "credit": "Fons Heijnsbroek",
+          "license": "CC0"
+        },
+        {
+          "id": "w15",
+          "archiveNum": "ARCHIVE 016",
+          "title": "Beech Forest (AU), Great Otway National Park, Beau",
+          "year": "2026",
+          "medium": "Digital Archive",
+          "dimensions": "Variable",
+          "desc": "Archived image from Wikimedia Commons.",
+          "image": "https://upload.wikimedia.org/wikipedia/commons/4/4e/Beech_Forest_%28AU%29%2C_Great_Otway_National_Park%2C_Beauchamp_Falls_--_2019_--_1271.jpg",
+          "source": "https://commons.wikimedia.org/wiki/File:Beech_Forest_(AU),_Great_Otway_National_Park,_Beauchamp_Falls_--_2019_--_1271.jpg",
+          "credit": "Dietmar Rabich",
+          "license": "CC BY-SA 4.0"
+        }
+      ]
+    }
+  ]
+};
+
+let currentArtist = null;
+let currentArtwork = null;
+let currentIdx = 0;
+let allWorks = [];
+
+const overlay = document.getElementById('transition-overlay');
+
+function transition(fn){
+  overlay.classList.add('active');
+  setTimeout(()=>{
+    fn();
+    window.scrollTo(0,0);
+    setTimeout(()=>overlay.classList.remove('active'),150);
+  },300);
+}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const names = {
+    'view-home':'— home —',
+    'view-archive':'— archive —',
+    'view-evidence':'— evidence —',
+    'view-artists':'— artists —',
+    'view-attributions':'— attributions —',
+    'view-about':'— about —'
+  };
+  document.getElementById('footer-context').textContent = names[id] || '—';
+}
+
+function renderHome(){
+  const grid = document.getElementById('home-grid');
+  grid.innerHTML = '';
+  const hero = ARCHIVE.artists[0].artworks[0];
+  const heroImg = document.getElementById('home-hero-image');
+  if(hero.image){
+    heroImg.innerHTML = `<img src="${hero.image}" alt="${hero.title}">` + heroImg.innerHTML;
+  }
+  ARCHIVE.artists.slice(0,3).forEach(artist => {
+    artist.artworks.slice(0,2).forEach((art,i) => {
+      const item = document.createElement('div');
+      item.className = 'archive-item';
+      item.style.cssText = 'min-height:180px;border:1px solid var(--line)';
+      if(art.image){
+        item.innerHTML = `<img src="${art.image}" alt="${art.title}"><div class="archive-overlay"><div class="ao-archive">${art.archiveNum}</div><div class="ao-title">${art.title}</div><div class="ao-meta">${artist.name} · ${art.year}</div></div>`;
+      } else {
+        item.innerHTML = `<div style="padding:16px"><div class="ao-archive" style="color:var(--muted)">${art.archiveNum}</div><div class="ao-title">${art.title}</div></div><div class="archive-overlay"><div class="ao-title">${art.title}</div></div>`;
+      }
+      item.addEventListener('click',()=>{
+        transition(()=>{
+          currentArtist = artist;
+          currentArtwork = art;
+          renderEvidence();
+          showView('view-evidence');
+        });
+      });
+      grid.appendChild(item);
+    });
+  });
+}
+
+function renderArchive(){
+  const grid = document.getElementById('archive-grid');
+  grid.innerHTML = '';
+  allWorks = [];
+  ARCHIVE.artists.forEach(artist => {
+    artist.artworks.forEach(art => {
+      allWorks.push({artist, art});
+      const item = document.createElement('div');
+      item.className = 'archive-item';
+      if(art.image){
+        item.innerHTML = `<img src="${art.image}" alt="${art.title}"><div class="archive-overlay"><div class="ao-archive">${art.archiveNum}</div><div class="ao-title">${art.title}</div><div class="ao-meta">${artist.name} · ${art.year}</div></div>`;
+      } else {
+        item.innerHTML = `<div style="padding:24px"><div style="font-size:10px;letter-spacing:2px;color:var(--muted)">${art.archiveNum}</div><div style="font-family:var(--display);font-size:16px;margin-top:8px">${art.title}</div></div>`;
+      }
+      item.addEventListener('click',()=>{
+        transition(()=>{
+          currentArtist = artist;
+          currentArtwork = art;
+          currentIdx = allWorks.findIndex(w => w.art.id === art.id);
+          renderEvidence();
+          showView('view-evidence');
+        });
+      });
+      grid.appendChild(item);
+    });
+  });
+  document.getElementById('archive-count').textContent = `— ${allWorks.length} works`;
+}
+
+function renderEvidence(){
+  const meta = document.getElementById('evidence-meta');
+  const hero = document.getElementById('evidence-hero');
+  const details = document.getElementById('evidence-details');
+  const blueprint = document.getElementById('blueprint-section');
+
+  meta.innerHTML = `
+    <div class="ev-archive">${currentArtwork.archiveNum}</div>
+    <h1>${currentArtwork.title}</h1>
+    <div class="ev-year">${currentArtwork.year}</div>
+    <div class="ev-desc">${currentArtwork.desc}</div>
+    <div class="ev-specs">
+      <div class="ev-spec"><span>Medium</span><span>${currentArtwork.medium}</span></div>
+      <div class="ev-spec"><span>Dimensions</span><span>${currentArtwork.dimensions}</span></div>
+      <div class="ev-spec"><span>Category</span><span>${currentArtist.theme}</span></div>
+    </div>
+  `;
+
+  if(currentArtwork.image){
+    hero.innerHTML = `<img src="${currentArtwork.image}" alt="${currentArtwork.title}">`;
+    details.innerHTML = `
+      <div class="evidence-detail">
+        <img src="${currentArtwork.image}" alt="Detail 1" style="object-position:20% 30%">
+        <div class="evidence-detail-caption">Detail A</div>
+      </div>
+      <div class="evidence-detail">
+        <img src="${currentArtwork.image}" alt="Detail 2" style="object-position:80% 70%">
+        <div class="evidence-detail-caption">Detail B</div>
+      </div>
+    `;
+  } else {
+    hero.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted)">[ NO IMAGE ]</div>`;
+    details.innerHTML = '';
+  }
+
+  blueprint.innerHTML = `
+    <h3>Blueprint Analysis</h3>
+    <div class="blueprint-images">
+      <div class="blueprint-item"><img src="${currentArtwork.image || ''}" alt="Blueprint 1"></div>
+      <div class="blueprint-item"><img src="${currentArtwork.image || ''}" alt="Blueprint 2"></div>
+      <div class="blueprint-item"><img src="${currentArtwork.image || ''}" alt="Blueprint 3"></div>
+    </div>
+  `;
+}
+
+function navigateEvidence(dir){
+  if(allWorks.length === 0) return;
+  currentIdx = (currentIdx + dir + allWorks.length) % allWorks.length;
+  const next = allWorks[currentIdx];
+  currentArtist = next.artist;
+  currentArtwork = next.art;
+  renderEvidence();
+}
+
+function renderArtists(){
+  const list = document.getElementById('artists-list');
+  list.innerHTML = '';
+  ARCHIVE.artists.forEach(artist => {
+    const item = document.createElement('div');
+    item.className = 'artist-item';
+    item.innerHTML = `
+      <div>
+        <div class="artist-name">${artist.name}</div>
+      </div>
+      <div class="artist-theme">${artist.theme}</div>
+    `;
+    item.addEventListener('click',()=>{
+      transition(()=>{
+        currentArtist = artist;
+        currentArtwork = artist.artworks[0];
+        currentIdx = 0;
+        renderEvidence();
+        showView('view-evidence');
+      });
+    });
+    list.appendChild(item);
+  });
+}
+
+function renderAttributions(){
+  const list = document.getElementById('attributions-list');
+  list.innerHTML = '';
+  ARCHIVE.artists.forEach(artist => {
+    artist.artworks.forEach(art => {
+      if(!art.image) return;
+      const item = document.createElement('div');
+      item.className = 'attr-item';
+      item.innerHTML = `
+        <div class="attr-item-header">
+          <div>
+            <div class="attr-title">${art.title}</div>
+            <div class="attr-artist">${artist.name} · ${art.archiveNum}</div>
+          </div>
+          <div style="font-size:16px">+</div>
+        </div>
+        <div class="attr-item-body">
+          <div class="attr-item-content">
+            <a href="${art.source}" target="_blank" rel="noopener">${art.source}</a><br>
+            Credit: ${art.credit}<br>
+            License: ${art.license}
+          </div>
+        </div>
+      `;
+      item.addEventListener('click',()=>item.classList.toggle('open'));
+      list.appendChild(item);
+    });
+  });
+}
+
+document.querySelectorAll('[data-nav]').forEach(link => {
+  link.addEventListener('click',e => {
+    e.preventDefault();
+    const target = link.dataset.nav;
+    if(target === 'home') transition(()=>{renderHome();showView('view-home');});
+    if(target === 'archive') transition(()=>{renderArchive();showView('view-archive');});
+    if(target === 'artists') transition(()=>{renderArtists();showView('view-artists');});
+    if(target === 'attributions') transition(()=>{renderAttributions();showView('view-attributions');});
+    if(target === 'about') transition(()=>{showView('view-about');});
+  });
+});
+
+document.getElementById('ev-back').addEventListener('click',()=>{transition(()=>{renderArchive();showView('view-archive');});});
+document.getElementById('ev-prev').addEventListener('click',()=>navigateEvidence(-1));
+document.getElementById('ev-next').addEventListener('click',()=>navigateEvidence(1));
+
+document.addEventListener('keydown',e=>{
+  if(e.key === 'Escape'){
+    const active = document.querySelector('.view.active');
+    if(active && active.id !== 'view-home'){
+      transition(()=>{renderHome();showView('view-home');});
+    }
+  }
+  if(e.key === 'ArrowLeft' && document.querySelector('#view-evidence.active')){
+    navigateEvidence(-1);
+  }
+  if(e.key === 'ArrowRight' && document.querySelector('#view-evidence.active')){
+    navigateEvidence(1);
+  }
+});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  renderHome();
+});
+</script>
+</body>
+</html>

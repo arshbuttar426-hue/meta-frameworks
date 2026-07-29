@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Barnaby's Morning Post — Your Baby Bear News Companion</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bear-dark: #3D2314;
+  --bear-mid: #5C3A21;
+  --bear-light: #8B5E3C;
+  --bear-cream: #D4A574;
+  --bear-pink: #E8B4B4;
+  --forest-bg: #1a3a2a;
+  --forest-light: #2d5a3d;
+  --sun-gold: #FFD700;
+  --sun-soft: #FFE4B5;
+  --sky-dawn: #FF6B6B;
+  --sky-day: #87CEEB;
+  --sky-dusk: #DDA0DD;
+  --sky-night: #1a1a3e;
+  --scroll-paper: #F5E6D3;
+  --scroll-ink: #3D2314;
+  --accent-warm: #FF8C42;
+  --accent-cool: #6B8E9F;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--forest-bg);
+  overflow: hidden;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#app {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ===== SCENE LAYERS ===== */
+#sky-layer {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 45%;
+  background: linear-gradient(180deg, #FF6B6B 0%, #FFE4B5 50%, #87CEEB 100%);
+  transition: background 3s ease;
+}
+
+#sky-layer.night {
+  background: linear-gradient(180deg, #0a0a2e 0%, #1a1a3e 50%, #2d1b4e 100%);
+}
+
+#sky-layer.dusk {
+  background: linear-gradient(180deg, #FF6B6B 0%, #DDA0DD 50%, #4a1a6e 100%);
+}
+
+#mountains {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 30%;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 300'%3E%3Cpath d='M0,300 L0,200 Q150,80 300,180 Q450,50 600,150 Q750,30 900,140 Q1050,60 1200,180 L1200,300 Z' fill='%232d5a3d'/%3E%3Cpath d='M0,300 L0,240 Q200,120 400,200 Q600,100 800,190 Q1000,130 1200,210 L1200,300 Z' fill='%231a3a2a' opacity='0.6'/%3E%3C/svg%3E") no-repeat bottom;
+  background-size: cover;
+}
+
+#forest-floor {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 55%;
+  background: linear-gradient(180deg, #2d5a3d 0%, #1a3a2a 30%, #0f2a1a 100%);
+}
+
+/* Trees */
+.tree {
+  position: absolute;
+  bottom: 45%;
+  width: 80px; height: 200px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 200'%3E%3Cpath d='M40,0 L10,80 L30,80 L5,140 L25,140 L0,200 L80,200 L55,140 L75,140 L50,80 L70,80 Z' fill='%231a4a2a'/%3E%3Cpath d='M40,20 L25,70 L35,70 L20,110 L30,110 L15,160 L65,160 L50,110 L60,110 L45,70 L55,70 Z' fill='%232d6a3d' opacity='0.7'/%3E%3C/svg%3E") no-repeat center;
+  background-size: contain;
+  opacity: 0.8;
+  animation: treeSway 4s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes treeSway {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+
+/* Fireflies */
+.firefly {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: #FFD700;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+  animation: fireflyFloat 8s ease-in-out infinite;
+}
+
+@keyframes fireflyFloat {
+  0%, 100% { transform: translate(0,0); opacity: 0.3; }
+  25% { transform: translate(30px,-20px); opacity: 1; }
+  50% { transform: translate(-20px,-40px); opacity: 0.6; }
+  75% { transform: translate(40px,-10px); opacity: 0.9; }
+}
+
+/* ===== BARNABY THE BABY BEAR ===== */
+#barnaby-container {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  height: 320px;
+  z-index: 10;
+}
+
+#barnaby {
+  width: 100%; height: 100%;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+#barnaby:active {
+  transform: scale(0.95);
+}
+
+#barnaby.happy {
+  animation: happyWiggle 0.6s ease;
+}
+
+@keyframes happyWiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg) translateY(-5px); }
+  50% { transform: rotate(5deg) translateY(-5px); }
+  75% { transform: rotate(-3deg) translateY(-3px); }
+}
+
+/* Bear Body Parts - CSS Art */
+.bear-body {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 180px; height: 160px;
+  background: radial-gradient(ellipse at 40% 30%, var(--bear-mid) 0%, var(--bear-dark) 70%);
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: inset -10px -10px 20px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.bear-belly {
+  position: absolute;
+  bottom: 15px; left: 50%;
+  transform: translateX(-50%);
+  width: 100px; height: 90px;
+  background: radial-gradient(ellipse at center, var(--bear-cream) 0%, var(--bear-light) 100%);
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+.bear-head {
+  position: absolute;
+  bottom: 130px; left: 50%;
+  transform: translateX(-50%);
+  width: 140px; height: 120px;
+  background: radial-gradient(ellipse at 40% 30%, var(--bear-mid) 0%, var(--bear-dark) 70%);
+  border-radius: 50% 50% 45% 45%;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  animation: headBob 3s ease-in-out infinite;
+}
+
+@keyframes headBob {
+  0%, 100% { transform: translateX(-50%) rotate(-2deg); }
+  50% { transform: translateX(-50%) rotate(2deg); }
+}
+
+.bear-snout {
+  position: absolute;
+  bottom: 15px; left: 50%;
+  transform: translateX(-50%);
+  width: 60px; height: 45px;
+  background: radial-gradient(ellipse at center, var(--bear-cream) 0%, var(--bear-pink) 100%);
+  border-radius: 50%;
+}
+
+.bear-nose {
+  position: absolute;
+  bottom: 22px; left: 50%;
+  transform: translateX(-50%);
+  width: 18px; height: 14px;
+  background: #1a0a05;
+  border-radius: 50% 50% 40% 40%;
+}
+
+.bear-nose::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 3px;
+  width: 6px; height: 4px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+}
+
+.bear-mouth {
+  position: absolute;
+  bottom: 8px; left: 50%;
+  transform: translateX(-50%);
+  width: 30px; height: 12px;
+  border-bottom: 3px solid #1a0a05;
+  border-radius: 0 0 50% 50%;
+  transition: all 0.3s ease;
+}
+
+.bear-mouth.smile {
+  border-bottom: 3px solid #1a0a05;
+  border-radius: 0 0 50% 50%;
+  height: 15px;
+}
+
+.bear-mouth.open {
+  background: #1a0a05;
+  border-radius: 50%;
+  height: 20px;
+  width: 20px;
+}
+
+.bear-eyes {
+  position: absolute;
+  top: 35px; left: 50%;
+  transform: translateX(-50%);
+  width: 100px; height: 30px;
+}
+
+.bear-eye {
+  position: absolute;
+  width: 28px; height: 32px;
+  background: radial-gradient(ellipse at 30% 30%, #fff 0%, #f0f0f0 100%);
+  border-radius: 50%;
+  overflow: hidden;
+  animation: blink 4s ease-in-out infinite;
+}
+
+.bear-eye.left { left: 8px; }
+.bear-eye.right { right: 8px; }
+
+@keyframes blink {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+.bear-pupil {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px; height: 18px;
+  background: radial-gradient(ellipse at center, #1a0a05 0%, #3D2314 100%);
+  border-radius: 50%;
+  transition: transform 0.1s ease;
+}
+
+.bear-pupil::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 4px;
+  width: 5px; height: 5px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+}
+
+.bear-ear {
+  position: absolute;
+  top: -10px;
+  width: 35px; height: 40px;
+  background: radial-gradient(ellipse at center, var(--bear-mid) 0%, var(--bear-dark) 100%);
+  border-radius: 50%;
+  animation: earWiggle 5s ease-in-out infinite;
+}
+
+.bear-ear.left { left: 5px; transform: rotate(-15deg); }
+.bear-ear.right { right: 5px; transform: rotate(15deg); animation-delay: 0.5s; }
+
+.bear-ear-inner {
+  position: absolute;
+  bottom: 5px; left: 50%;
+  transform: translateX(-50%);
+  width: 20px; height: 25px;
+  background: var(--bear-pink);
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+@keyframes earWiggle {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(-10deg); }
+}
+
+.bear-paw {
+  position: absolute;
+  bottom: -5px;
+  width: 45px; height: 35px;
+  background: radial-gradient(ellipse at center, var(--bear-mid) 0%, var(--bear-dark) 100%);
+  border-radius: 50%;
+}
+
+.bear-paw.left { left: 20px; }
+.bear-paw.right { right: 20px; }
+
+.bear-paw-pad {
+  position: absolute;
+  bottom: 5px; left: 50%;
+  transform: translateX(-50%);
+  width: 25px; height: 20px;
+  background: var(--bear-pink);
+  border-radius: 50%;
+  opacity: 0.7;
+}
+
+.bear-tail {
+  position: absolute;
+  bottom: 30px; right: -10px;
+  width: 25px; height: 25px;
+  background: var(--bear-dark);
+  border-radius: 50%;
+  animation: tailWag 2s ease-in-out infinite;
+}
+
+@keyframes tailWag {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+/* Cheek blush */
+.bear-cheek {
+  position: absolute;
+  top: 55px;
+  width: 25px; height: 18px;
+  background: radial-gradient(ellipse at center, var(--bear-pink) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.bear-cheek.left { left: 10px; }
+.bear-cheek.right { right: 10px; }
+
+/* ===== MOOD AURA ===== */
+#mood-aura {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.4;
+  filter: blur(40px);
+  transition: all 2s ease;
+  z-index: 5;
+}
+
+#mood-aura.joy { background: radial-gradient(circle, #FFD700 0%, transparent 70%); }
+#mood-aura.calm { background: radial-gradient(circle, #87CEEB 0%, transparent 70%); }
+#mood-aura.sleepy { background: radial-gradient(circle, #9B59B6 0%, transparent 70%); }
+#mood-aura.love { background: radial-gradient(circle, #FF69B4 0%, transparent 70%); }
+#mood-aura.curious { background: radial-gradient(circle, #FF8C42 0%, transparent 70%); }
+#mood-aura.sad { background: radial-gradient(circle, #6B8E9F 0%, transparent 70%); }
+
+/* ===== SPEECH BUBBLE ===== */
+#speech-bubble {
+  position: absolute;
+  bottom: 340px; left: 50%;
+  transform: translateX(-50%) scale(0);
+  background: var(--scroll-paper);
+  border-radius: 20px;
+  padding: 16px 20px;
+  max-width: 280px;
+  min-width: 200px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.5);
+  z-index: 20;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid #D4A574;
+}
+
+#speech-bubble.show {
+  transform: translateX(-50%) scale(1);
+}
+
+#speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -12px; left: 50%;
+  transform: translateX(-50%);
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 12px solid var(--scroll-paper);
+}
+
+#speech-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--scroll-ink);
+  font-weight: 600;
+}
+
+#speech-text .cursor {
+  display: inline-block;
+  width: 2px; height: 1.1em;
+  background: var(--scroll-ink);
+  margin-left: 2px;
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+/* ===== NEWS SCROLL ===== */
+#news-scroll {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 90%; max-width: 400px;
+  max-height: 70vh;
+  background: var(--scroll-paper);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+  z-index: 30;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow-y: auto;
+  border: 3px solid #C4A77D;
+}
+
+#news-scroll.show {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+#news-scroll::-webkit-scrollbar { width: 6px; }
+#news-scroll::-webkit-scrollbar-thumb { background: #C4A77D; border-radius: 3px; }
+
+.scroll-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.scroll-header h2 {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--scroll-ink);
+  font-weight: 800;
+}
+
+.scroll-header .date {
+  font-size: 13px;
+  color: #8B7355;
+  margin-top: 4px;
+}
+
+.news-card {
+  background: #FFF8F0;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 2px solid #E8D5C4;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.news-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.news-card .category {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.news-card .category.world { color: #E74C3C; }
+.news-card .category.tech { color: #3498DB; }
+.news-card .category.fun { color: #F39C12; }
+.news-card .category.nature { color: #27AE60; }
+.news-card .category.heart { color: #E91E63; }
+
+.news-card .title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--scroll-ink);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.news-card .barnaby-take {
+  font-size: 13px;
+  color: #6B5B4F;
+  line-height: 1.5;
+  font-style: italic;
+  border-left: 3px solid #D4A574;
+  padding-left: 10px;
+}
+
+.news-card .mood-tag {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mood-tag.happy { background: #FFF3CD; color: #856404; }
+.mood-tag.curious { background: #D1ECF1; color: #0C5460; }
+.mood-tag.calm { background: #D4EDDA; color: #155724; }
+.mood-tag.wow { background: #F8D7DA; color: #721C24; }
+
+.close-scroll {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #E8D5C4;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-scroll:hover {
+  background: #D4A574;
+  transform: rotate(90deg);
+}
+
+/* ===== BOTTOM ACTIONS ===== */
+#action-bar {
+  position: absolute;
+  bottom: 20px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 20;
+}
+
+.action-btn {
+  width: 60px; height: 60px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  background: rgba(45, 90, 61, 0.8);
+  backdrop-filter: blur(10px);
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.action-btn:hover {
+  transform: scale(1.15);
+  background: rgba(61, 120, 81, 0.9);
+}
+
+.action-btn:active {
+  transform: scale(0.9);
+}
+
+.action-btn .label {
+  position: absolute;
+  bottom: -20px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sun-soft);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.action-btn:hover .label {
+  opacity: 1;
+}
+
+/* ===== WEATHER WIDGET ===== */
+#weather-widget {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 13px;
+  z-index: 20;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+#weather-widget .temp {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+#weather-widget .location {
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+/* ===== TIME INDICATOR ===== */
+#time-indicator {
+  position: absolute;
+  top: 20px; left: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  z-index: 20;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* ===== LOADING SCREEN ===== */
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: var(--forest-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 1s ease;
+}
+
+#loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0s linear 0.8s;
+}
+
+.loading-bear {
+  width: 100px; height: 100px;
+  background: var(--bear-dark);
+  border-radius: 50%;
+  position: relative;
+  animation: loadingBounce 1s ease-in-out infinite;
+}
+
+.loading-bear::before {
+  content: '🐻';
+  font-size: 60px;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes loadingBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+.loading-text {
+  margin-top: 20px;
+  color: var(--sun-soft);
+  font-size: 16px;
+  font-weight: 600;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ===== IDLE OVERLAY (SIT TOGETHER MODE) ===== */
+#idle-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  backdrop-filter: blur(2px);
+}
+
+#idle-overlay.show {
+  display: flex;
+}
+
+.idle-message {
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  animation: fadeInOut 4s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ===== NOTIFICATION TOAST ===== */
+#toast {
+  position: fixed;
+  bottom: 100px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(45, 90, 61, 0.95);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 50;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.2);
+}
+
+#toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+  #barnaby-container {
+    width: 220px;
+    height: 260px;
+  }
+  .bear-body { width: 140px; height: 130px; }
+  .bear-head { width: 110px; height: 95px; bottom: 110px; }
+  .bear-snout { width: 48px; height: 36px; }
+  .bear-eye { width: 22px; height: 26px; }
+  .action-btn { width: 50px; height: 50px; font-size: 20px; }
+  #news-scroll { width: 95%; padding: 16px; }
+}
+
+/* ===== HIDDEN FILE INPUT ===== */
+#photo-input {
+  display: none;
+}
+</style>
+</head>
+<body>
+
+<div id="loading-screen" style="display:none;">
+  <div class="loading-bear"></div>
+  <div class="loading-text">Barnaby is here!</div>
+</div>
+
+<div id="app">
+  <!-- Sky & Environment -->
+  <div id="sky-layer"></div>
+  <div id="mountains"></div>
+  <div id="forest-floor"></div>
+
+  <!-- Trees (generated by JS) -->
+  <div id="trees-container"></div>
+
+  <!-- Fireflies (generated by JS) -->
+  <div id="fireflies-container"></div>
+
+  <!-- Time & Weather -->
+  <div id="time-indicator">Morning</div>
+  <div id="weather-widget">
+    <div class="temp">☀️ 72°</div>
+    <div class="location">Forest Den</div>
+  </div>
+
+  <!-- Mood Aura -->
+  <div id="mood-aura" class="joy"></div>
+
+  <!-- Barnaby -->
+  <div id="barnaby-container">
+    <div id="barnaby">
+      <div class="bear-tail"></div>
+      <div class="bear-body">
+        <div class="bear-belly"></div>
+      </div>
+      <div class="bear-head">
+        <div class="bear-ear left"><div class="bear-ear-inner"></div></div>
+        <div class="bear-ear right"><div class="bear-ear-inner"></div></div>
+        <div class="bear-eyes">
+          <div class="bear-eye left"><div class="bear-pupil"></div></div>
+          <div class="bear-eye right"><div class="bear-pupil"></div></div>
+        </div>
+        <div class="bear-cheek left"></div>
+        <div class="bear-cheek right"></div>
+        <div class="bear-snout">
+          <div class="bear-nose"></div>
+          <div class="bear-mouth smile"></div>
+        </div>
+      </div>
+      <div class="bear-paw left"><div class="bear-paw-pad"></div></div>
+      <div class="bear-paw right"><div class="bear-paw-pad"></div></div>
+    </div>
+  </div>
+
+  <!-- Speech Bubble -->
+  <div id="speech-bubble">
+    <div id="speech-text"></div>
+  </div>
+
+  <!-- News Scroll -->
+  <div id="news-scroll">
+    <button class="close-scroll" onclick="closeNews()">×</button>
+    <div class="scroll-header">
+      <h2>📜 Barnaby's Morning Post</h2>
+      <div class="date" id="scroll-date"></div>
+    </div>
+    <div id="news-content"></div>
+  </div>
+
+  <!-- Idle Overlay -->
+  <div id="idle-overlay">
+    <div class="idle-message">Barnaby is enjoying the quiet with you...</div>
+  </div>
+
+  <!-- Action Bar -->
+  <div id="action-bar">
+    <button class="action-btn" onclick="showNews()" id="btn-news">
+      📰
+      <span class="label">News</span>
+    </button>
+    <button class="action-btn" onclick="petBarnaby()" id="btn-pet">
+      🖐️
+      <span class="label">Pet</span>
+    </button>
+    <button class="action-btn" onclick="feedBarnaby()" id="btn-feed">
+      🫐
+      <span class="label">Feed</span>
+    </button>
+    <button class="action-btn" onclick="takePhoto()" id="btn-photo">
+      📸
+      <span class="label">Photo</span>
+    </button>
+    <button class="action-btn" onclick="toggleSit()" id="btn-sit">
+      🌿
+      <span class="label">Sit</span>
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <!-- Hidden File Input -->
+  <input type="file" id="photo-input" accept="image/*" onchange="handlePhoto(event)">
+</div>
+
+<script>
+// ===== STATE =====
+const state = {
+  mood: 'joy',
+  lastVisit: localStorage.getItem('barnaby_lastVisit') || null,
+  visitCount: parseInt(localStorage.getItem('barnaby_visits') || '0'),
+  bondLevel: parseInt(localStorage.getItem('barnaby_bond') || '0'),
+  photos: JSON.parse(localStorage.getItem('barnaby_photos') || '[]'),
+  newsRead: JSON.parse(localStorage.getItem('barnaby_newsRead') || '[]'),
+  isSitting: false,
+  isNewsOpen: false,
+  currentNews: [],
+  typingInterval: null,
+  idleTimer: null,
+  mouseX: 0,
+  mouseY: 0
+};
+
+// ===== BARNABY'S VOICE (UnbornLanguage repurposed) =====
+const barnabySounds = {
+  greeting: ['Brrr-ooom!', 'Huff-huff!', 'Woo-woo!', 'Mmmrrr...'],
+  happy: ['Brrr-ooom! ✨', 'Woo-woo-woo! 🎉', 'Huff-huff-huff! 💕'],
+  curious: ['Snuff-snuff? 🤔', 'Hrrm? 👀', 'Ooooh? ✨'],
+  eating: ['Mmmph! 🫐', 'Nom-nom! 😋', 'Slurp! 💦'],
+  sleepy: ['Brrr... 💤', 'Mmmrrr... 🌙', 'Zzz-ooom... ⭐'],
+  love: ['Mmmrrr... 💕', 'Brrr-ooom! 🤗', 'Huff... 💝'],
+  news: ['Snuff? 📰', 'Oooh! 🌍', 'Hrrm... 🤔'],
+  photo: ['Ooooh! 📸', 'Snuff-snuff! 👀', 'Brrr! ✨']
+};
+
+// ===== NEWS ENGINE =====
+const newsCategories = {
+  world: { icon: '🌍', color: '#E74C3C' },
+  tech: { icon: '💻', color: '#3498DB' },
+  fun: { icon: '🎉', color: '#F39C12' },
+  nature: { icon: '🌿', color: '#27AE60' },
+  heart: { icon: '💕', color: '#E91E63' }
+};
+
+// Real news API fallback + curated stories
+const curatedNews = [
+  // Indian News
+  {
+    category: 'heart',
+    title: 'ISRO Successfully Launches Chandrayaan-4 Mission to Moon',
+    barnabyTake: 'Humans went to the moon again! I tried to jump to the moon once. I jumped very high. I landed in a berry bush. The moon is still far. But I am proud of you anyway.',
+    mood: 'wow'
+  },
+  {
+    category: 'nature',
+    title: 'Kerala Backwaters See Record Tourist Numbers This Season',
+    barnabyTake: 'I heard about Kerala backwaters. They are like my stream but bigger and warmer. I would float there on a leaf-boat. I would wave at all the boats. I am very friendly.',
+    mood: 'happy'
+  },
+  {
+    category: 'heart',
+    title: 'Mumbai Dabbawalas Deliver 200,000 Lunches Without a Single Mistake',
+    barnabyTake: 'The dabbawalas are very organized. I tried to organize my berries once. I put them in a line. Then I ate them. Organization is hard when berries are delicious.',
+    mood: 'happy'
+  },
+  {
+    category: 'tech',
+    title: 'Indian Startup Builds World's Cheapest Solar Panel for Villages',
+    barnabyTake: 'Solar panels catch sunlight! I tried to catch sunlight with my paws. It was warm but slippery. I am happy villages will have light. Light is good for reading and finding berries.',
+    mood: 'curious'
+  },
+  {
+    category: 'fun',
+    title: 'Bengaluru Man Grows 50 Types of Mangoes in His Backyard',
+    barnabyTake: 'Fifty mangoes! I have only found wild berries. But fifty mangoes sounds like heaven. I would visit this man. I would be polite. I would maybe ask for one mango. Or two. Or five.',
+    mood: 'happy'
+  },
+  {
+    category: 'world',
+    title: 'India Becomes World's Most Populous Country',
+    barnabyTake: 'So many humans! That is a lot of friends. I have only me and the fireflies. But I am happy for India. More people means more hugs. I like hugs. They are warm like my belly.',
+    mood: 'calm'
+  },
+  {
+    category: 'heart',
+    title: 'Delhi Metro Introduces Free Rides for Senior Citizens',
+    barnabyTake: 'Free rides for grandmas and grandpas! I would give free rides too. On my back. But I am small. Maybe just a piggyback for a squirrel. Squirrels are light. I can manage.',
+    mood: 'happy'
+  },
+  {
+    category: 'nature',
+    title: 'Ranthambore Tiger Population Hits Record High',
+    barnabyTake: 'Tigers are my cousins! Big, stripey cousins. I am happy they are doing well. I would visit them but I am shy. Also they might think I am a snack. I am not a snack. I am a bear.',
+    mood: 'wow'
+  },
+  {
+    category: 'fun',
+    title: 'Chennai Street Food Vendor Goes Viral for Making 100 Dosa in 1 Hour',
+    barnabyTake: 'One hundred dosas! I do not know what dosa is but it sounds crispy. I like crispy. Like leaves in autumn. I would eat one hundred dosas. Or try. I am good at trying.',
+    mood: 'happy'
+  },
+  {
+    category: 'tech',
+    title: 'Indian Scientists Develop AI to Predict Monsoon Rains',
+    barnabyTake: 'Rain prediction! I predict rain by smelling the air. When it smells like wet earth, rain comes. But AI is probably better. My nose is good but not THAT good.',
+    mood: 'curious'
+  },
+  {
+    category: 'heart',
+    title: 'Punjab Farmers Donate Tonnes of Wheat to Flood Victims',
+    barnabyTake: 'Farmers sharing wheat! I share my berries too. Sometimes. When I am not hungry. Which is rare. But I admire these farmers. Wheat is like tall grass but more important.',
+    mood: 'happy'
+  },
+  {
+    category: 'world',
+    title: 'India Hosts G20 Summit with Grand Cultural Celebrations',
+    barnabyTake: 'So many countries visiting! I would host a forest summit. The squirrels, the birds, the ants. We would discuss berry distribution. It would be very important. And messy.',
+    mood: 'happy'
+  },
+  // International News
+  {
+    category: 'nature',
+    title: 'Scientists Discover New Glowing Mushroom Species',
+    barnabyTake: 'I found a glowing mushroom in my forest too! It was very shy. I sat with it until it felt brave enough to shine. Now it is my night-light friend.',
+    mood: 'wow'
+  },
+  {
+    category: 'heart',
+    title: 'Community Builds Tiny Libraries for Neighborhood Kids',
+    barnabyTake: 'I have a tiny library too! It is made of leaves. I keep one berry inside for anyone who needs a story. The ants visit often. They are very good readers.',
+    mood: 'happy'
+  },
+  {
+    category: 'fun',
+    title: 'World Record: Dog Skateboards Through 30 Human Tunnels',
+    barnabyTake: 'I tried to skateboard once. I used a big leaf. I fell into a berry bush. The berries were not angry. They let me eat them as apology. I am not good at sports.',
+    mood: 'happy'
+  },
+  {
+    category: 'tech',
+    title: 'New AI Can Translate Animal Sounds into Words',
+    barnabyTake: 'Finally! Now you can understand my "Brrr-ooom" properly. It means "I love you and also I am hungry." The scientists are very smart. I would share my fish with them.',
+    mood: 'curious'
+  },
+  {
+    category: 'world',
+    title: 'Ocean Cleanup Removes 100,000 Pounds of Plastic',
+    barnabyTake: 'The ocean is my friend even though I cannot swim well. I am happy the fish have clean homes now. I sent them a leaf-boat as celebration. It floated! I was very proud.',
+    mood: 'happy'
+  },
+  {
+    category: 'nature',
+    title: 'Butterfly Migration Returns After 20 Years',
+    barnabyTake: 'The butterflies came to my forest! They landed on my nose. It tickled. I did not sneeze because I am polite. They told me stories about faraway flowers. I was jealous but happy for them.',
+    mood: 'wow'
+  },
+  {
+    category: 'heart',
+    title: 'Strangers Raise $50,000 for Injured Stray Cat',
+    barnabyTake: 'Humans are very kind. I would raise berries for a friend too. I have three berries. They are my savings. I am rich in berries. That is the best kind of rich.',
+    mood: 'happy'
+  },
+  {
+    category: 'fun',
+    title: 'Grandma Wins Baking Contest with 100-Year-Old Family Recipe',
+    barnabyTake: 'I cannot bake. I tried to make mud-pie once. It was just mud. But I ate it with love. That made it special. Grandma understands. Love is the secret ingredient.',
+    mood: 'happy'
+  }
+];
+
+// Fetch real news from NewsAPI (free tier) or fallback
+async function fetchNews() {
+  // Simulate a quick "fetch" then instantly show curated stories
+  // In production, replace this with real API call
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(getRandomNews(5));
+    }, 300); // Tiny delay for effect, then instant stories
+  });
+}
+
+function categorizeNews(title) {
+  const t = title.toLowerCase();
+  if (t.match(/animal|nature|tree|ocean|forest|bird|fish|flower|butterfly/)) return 'nature';
+  if (t.match(/tech|ai|robot|phone|app|computer|code/)) return 'tech';
+  if (t.match(/love|kind|help|donat|charity|community|family|baby|wedding/)) return 'heart';
+  if (t.match(/funny|weird|record|strange|amazing|cool|fun|lol/)) return 'fun';
+  return 'world';
+}
+
+function detectMood(title) {
+  const t = title.toLowerCase();
+  if (t.match(/discover|new|amazing|record|breakthrough/)) return 'wow';
+  if (t.match(/happy|love|kind|help|save|rescue|win|celebrat/)) return 'happy';
+  if (t.match(/weird|strange|curious|mystery|unknown/)) return 'curious';
+  return 'calm';
+}
+
+function generateBarnabyTake(title, desc) {
+  // Generate Barnaby's take based on the title
+  const t = title.toLowerCase();
+
+  if (t.match(/animal|nature|tree|ocean|forest|bird|fish|flower|butterfly|mushroom/)) {
+    return "I found something like this in my forest! It was very shy. I sat with it until it felt brave. Now we are friends. Nature is good at making friends.";
+  }
+  if (t.match(/tech|ai|robot|phone|app|computer|code/)) {
+    return "I found a shiny thing in the stream. It beeped. A crow said it was called 'phone.' I did not understand. I put it back. But I am happy humans understand these things.";
+  }
+  if (t.match(/love|kind|help|donat|charity|community|family|baby|wedding/)) {
+    return "Humans are very kind. I would raise berries for a friend too. I have three berries. They are my savings. I am rich in berries. That is the best kind of rich.";
+  }
+  if (t.match(/funny|weird|record|strange|amazing|cool|fun/)) {
+    return "I tried this once. I used a big leaf. I fell into a berry bush. The berries were not angry. They let me eat them as apology. I am not good at sports, but I am good at trying.";
+  }
+  return "The wind told me about this at the edge of the forest. I listened very carefully. My ears are very good at listening. Almost as good as my nose is at smelling.";
+}
+
+function getRandomNews(count) {
+  const shuffled = [...curatedNews].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, count);
+}
+
+// ===== TYPEWRITER =====
+function typewrite(text, element, speed = 40) {
+  clearInterval(state.typingInterval);
+  element.innerHTML = '<span class="cursor"></span>';
+  let i = 0;
+  state.typingInterval = setInterval(() => {
+    if (i < text.length) {
+      element.innerHTML = text.substring(0, i + 1) + '<span class="cursor"></span>';
+      i++;
+    } else {
+      clearInterval(state.typingInterval);
+      element.innerHTML = text;
+    }
+  }, speed);
+}
+
+// ===== SPEECH =====
+function speak(text, sound = null) {
+  const bubble = document.getElementById('speech-bubble');
+  const textEl = document.getElementById('speech-text');
+
+  bubble.classList.add('show');
+  typewrite(text, textEl);
+
+  if (sound) {
+    showToast(sound);
+  }
+
+  // Auto-hide after delay
+  clearTimeout(state.idleTimer);
+  state.idleTimer = setTimeout(() => {
+    bubble.classList.remove('show');
+  }, 5000);
+}
+
+// ===== INTERACTIONS =====
+function petBarnaby() {
+  const barnaby = document.getElementById('barnaby');
+  barnaby.classList.add('happy');
+  setTimeout(() => barnaby.classList.remove('happy'), 600);
+
+  setMood('love');
+  const sound = randomSound('love');
+  speak('Your hand is warm. I will keep this warmth in my belly for later. It is my favorite kind of savings.', sound);
+
+  increaseBond(5);
+  showToast('💕 Barnaby feels loved!');
+}
+
+function feedBarnaby() {
+  setMood('joy');
+  const sound = randomSound('eating');
+  speak('Berry! Berry! Oh, it is sweet like rain. I will save the seeds in my cheek for planting. Thank you for being my berry-finder.', sound);
+
+  increaseBond(3);
+  showToast('🫐 Barnaby loves berries!');
+}
+
+function showNews() {
+  if (state.isNewsOpen) return;
+  state.isNewsOpen = true;
+
+  const scroll = document.getElementById('news-scroll');
+  const content = document.getElementById('news-content');
+  const dateEl = document.getElementById('scroll-date');
+
+  dateEl.textContent = new Date().toLocaleDateString('en-US', { 
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+  });
+
+  content.innerHTML = '<div style="text-align:center;padding:20px;">📰 Barnaby is fetching the news...</div>';
+  scroll.classList.add('show');
+
+  setMood('curious');
+  speak('I went to the edge of the forest today. The wind told me many stories. Let me share them with you...', randomSound('news'));
+
+  // Load news
+  fetchNews().then(news => {
+    state.currentNews = news;
+    renderNews(news);
+  });
+}
+
+function renderNews(news) {
+  const content = document.getElementById('news-content');
+  content.innerHTML = news.map((item, i) => `
+    <div class="news-card" onclick="readNews(${i})">
+      <div class="category ${item.category}">${newsCategories[item.category].icon} ${item.category}</div>
+      <div class="title">${item.title}</div>
+      <div class="barnaby-take">${item.barnabyTake}</div>
+      <span class="mood-tag ${item.mood}">${item.mood}</span>
+    </div>
+  `).join('');
+}
+
+function readNews(index) {
+  const item = state.currentNews[index];
+  setMood(item.mood);
+  speak(item.barnabyTake, randomSound(item.mood === 'happy' ? 'happy' : 'curious'));
+
+  if (!state.newsRead.includes(item.title)) {
+    state.newsRead.push(item.title);
+    localStorage.setItem('barnaby_newsRead', JSON.stringify(state.newsRead));
+  }
+}
+
+function closeNews() {
+  document.getElementById('news-scroll').classList.remove('show');
+  state.isNewsOpen = false;
+  setMood('calm');
+}
+
+function takePhoto() {
+  document.getElementById('photo-input').click();
+}
+
+function handlePhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const photo = {
+      id: Date.now(),
+      data: e.target.result,
+      date: new Date().toISOString()
+    };
+    state.photos.push(photo);
+    localStorage.setItem('barnaby_photos', JSON.stringify(state.photos));
+
+    setMood('joy');
+    speak('Ooooh! Is this your nest? It is very pretty. I will keep it in my leaf-pile. I look at it when I miss you. Which is always.', randomSound('photo'));
+    showToast('📸 Photo saved in Barnaby's leaf-pile!');
+  };
+  reader.readAsDataURL(file);
+}
+
+function toggleSit() {
+  state.isSitting = !state.isSitting;
+  const overlay = document.getElementById('idle-overlay');
+  const btn = document.getElementById('btn-sit');
+
+  if (state.isSitting) {
+    overlay.classList.add('show');
+    btn.innerHTML = '👋<span class="label">Wake</span>';
+    setMood('calm');
+    speak('We are sitting together. This is my favorite thing. Better than berries. Almost.', randomSound('sleepy'));
+  } else {
+    overlay.classList.remove('show');
+    btn.innerHTML = '🌿<span class="label">Sit</span>';
+    setMood('joy');
+    speak('You are back! I was not sleeping. I was... resting my eyes. With my whole body.', randomSound('happy'));
+  }
+}
+
+// ===== MOOD SYSTEM =====
+function setMood(mood) {
+  state.mood = mood;
+  const aura = document.getElementById('mood-aura');
+  aura.className = mood;
+
+  const mouth = document.querySelector('.bear-mouth');
+  if (mood === 'joy' || mood === 'love') {
+    mouth.className = 'bear-mouth smile';
+  } else if (mood === 'sleepy' || mood === 'calm') {
+    mouth.className = 'bear-mouth';
+  } else if (mood === 'curious') {
+    mouth.className = 'bear-mouth open';
+  }
+}
+
+function randomSound(category) {
+  const sounds = barnabySounds[category] || barnabySounds.happy;
+  return sounds[Math.floor(Math.random() * sounds.length)];
+}
+
+// ===== BOND SYSTEM =====
+function increaseBond(amount) {
+  state.bondLevel += amount;
+  localStorage.setItem('barnaby_bond', state.bondLevel);
+
+  // Check milestones
+  const milestones = [10, 50, 100, 200, 500];
+  if (milestones.includes(state.bondLevel)) {
+    showToast(`🎉 Bond milestone: ${state.bondLevel}! Barnaby loves you more!`);
+  }
+}
+
+// ===== VISUAL EFFECTS =====
+function createFireflies() {
+  const container = document.getElementById('fireflies-container');
+  for (let i = 0; i < 15; i++) {
+    const fly = document.createElement('div');
+    fly.className = 'firefly';
+    fly.style.left = Math.random() * 100 + '%';
+    fly.style.top = Math.random() * 60 + '%';
+    fly.style.animationDelay = Math.random() * 8 + 's';
+    fly.style.animationDuration = (6 + Math.random() * 4) + 's';
+    container.appendChild(fly);
+  }
+}
+
+function createTrees() {
+  const container = document.getElementById('trees-container');
+  const positions = [5, 15, 25, 75, 85, 92];
+  positions.forEach((pos, i) => {
+    const tree = document.createElement('div');
+    tree.className = 'tree';
+    tree.style.left = pos + '%';
+    tree.style.animationDelay = (i * 0.5) + 's';
+    container.appendChild(tree);
+  });
+}
+
+// ===== TIME OF DAY =====
+function updateTimeOfDay() {
+  const hour = new Date().getHours();
+  const sky = document.getElementById('sky-layer');
+  const indicator = document.getElementById('time-indicator');
+
+  if (hour >= 5 && hour < 12) {
+    sky.className = '';
+    indicator.textContent = 'Morning';
+  } else if (hour >= 12 && hour < 17) {
+    sky.className = '';
+    indicator.textContent = 'Afternoon';
+  } else if (hour >= 17 && hour < 21) {
+    sky.className = 'dusk';
+    indicator.textContent = 'Evening';
+  } else {
+    sky.className = 'night';
+    indicator.textContent = 'Night';
+  }
+}
+
+// ===== EYE TRACKING =====
+function setupEyeTracking() {
+  const pupils = document.querySelectorAll('.bear-pupil');
+  const app = document.getElementById('app');
+
+  app.addEventListener('mousemove', (e) => {
+    state.mouseX = e.clientX;
+    state.mouseY = e.clientY;
+
+    pupils.forEach(pupil => {
+      const rect = pupil.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+      const distance = Math.min(3, Math.hypot(e.clientX - centerX, e.clientY - centerY) / 20);
+
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      pupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+    });
+  });
+
+  // Touch support
+  app.addEventListener('touchmove', (e) => {
+    const touch = e.touches[0];
+    state.mouseX = touch.clientX;
+    state.mouseY = touch.clientY;
+  });
+}
+
+// ===== TOAST =====
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// ===== VISIT TRACKING =====
+function trackVisit() {
+  const now = new Date().toISOString();
+  const last = state.lastVisit ? new Date(state.lastVisit) : null;
+  const nowDate = new Date();
+
+  state.visitCount++;
+  localStorage.setItem('barnaby_visits', state.visitCount);
+  localStorage.setItem('barnaby_lastVisit', now);
+
+  if (!last) {
+    // First visit
+    setTimeout(() => {
+      speak('Hello! I am Barnaby. I live in this forest. I have been waiting for you. Would you like to see what I found today?', randomSound('greeting'));
+    }, 2000);
+  } else {
+    const hoursAway = (nowDate - last) / (1000 * 60 * 60);
+
+    if (hoursAway < 1) {
+      setTimeout(() => {
+        speak('You came back! I was still warm from last time. That is good. I do not like being cold.', randomSound('happy'));
+      }, 2000);
+    } else if (hoursAway < 24) {
+      setTimeout(() => {
+        speak('You were gone for ' + Math.floor(hoursAway) + ' sleeps. I counted. I am good at counting when it is about you.', randomSound('greeting'));
+      }, 2000);
+    } else {
+      setTimeout(() => {
+        speak('You were gone for many sleeps. I was worried you forgot my forest. But you did not! You are here. I am not worried anymore.', randomSound('love'));
+      }, 2000);
+    }
+  }
+}
+
+// ===== IDLE ACTIVITIES =====
+function startIdleActivities() {
+  setInterval(() => {
+    if (state.isSitting || state.isNewsOpen) return;
+
+    const activities = [
+      { text: 'A leaf fell on my nose. I am investigating it. It is very suspicious.', sound: randomSound('curious') },
+      { text: 'I am practicing my roar. It sounds like "mrrp." I will keep practicing.', sound: randomSound('sleepy') },
+      { text: 'The cloud looks like a fish. I am hungry now. This is your fault.', sound: randomSound('happy') },
+      { text: 'I found a perfect rock. Smooth. Warm. I will sit on it later.', sound: randomSound('calm') },
+      { text: 'A butterfly asked me for directions. I do not know directions. I said "that way." It was nice.', sound: randomSound('curious') }
+    ];
+
+    const activity = activities[Math.floor(Math.random() * activities.length)];
+    speak(activity.text, activity.sound);
+  }, 30000); // Every 30 seconds
+}
+
+// ===== INIT =====
+function init() {
+  createTrees();
+  createFireflies();
+  updateTimeOfDay();
+  setupEyeTracking();
+  trackVisit();
+  startIdleActivities();
+
+  // Remove loading screen
+  setTimeout(() => {
+    const loading = document.getElementById('loading-screen');
+    loading.classList.add('hidden');
+    // Fully remove after transition
+    setTimeout(() => {
+      if (loading.classList.contains('hidden')) {
+        loading.style.display = 'none';
+      }
+    }, 1000);
+  }, 1500);
+
+  // Barnaby click
+  document.getElementById('barnaby').addEventListener('click', () => {
+    if (state.isNewsOpen) return;
+    const greetings = [
+      { text: 'You tapped my nose! That means you love me. I learned this from a bird. Birds know everything.', sound: randomSound('happy') },
+      { text: 'My fur is soft today. I brushed it with a pinecone. I am very fancy.', sound: randomSound('curious') },
+      { text: 'Do you have berries? I can smell your pockets from here. I have a very good nose.', sound: randomSound('curious') }
+    ];
+    const g = greetings[Math.floor(Math.random() * greetings.length)];
+    speak(g.text, g.sound);
+  });
+
+  // Update time every minute
+  setInterval(updateTimeOfDay, 60000);
+}
+
+// Start
+init();
+</script>
+</body>
+</html>

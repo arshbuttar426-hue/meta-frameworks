@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="DREAMSWAP — Stories, systems, machines, and forgotten worlds.">
+<meta name="theme-color" content="#111111">
+<title>DREAMSWAP — The Machine Remembers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Noto+Serif+JP:wght@300;400;600&family=Space+Grotesk:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════════════════════════════
+   DREAMSWAP — INSTITUTIONAL FRAMEWORK v2
+   ═══════════════════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--institution-mono);
+  background:var(--realm-bg,var(--institution-bg));
+  color:var(--realm-text,var(--institution-text));
+  line-height:1.4;
+  font-size:13px;
+  overflow-x:hidden;
+  min-height:100vh;
+  transition:background 0.8s ease, color 0.8s ease;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;background:none;border:none;color:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+
+:root{
+  --institution-bg:#111111;
+  --institution-surface:#1a1a1a;
+  --institution-text:#c4b8a5;
+  --institution-text-secondary:#7a6f5e;
+  --institution-mono:'IBM Plex Mono',monospace;
+  --institution-secondary:'Inter',sans-serif;
+  --realm-bg:var(--institution-bg);
+  --realm-text:var(--institution-text);
+  --realm-secondary:var(--institution-secondary);
+  --realm-accent:var(--institution-text-secondary);
+}
+
+/* Film grain texture */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ─── PARTICLES CANVAS ─── */
+#particles-canvas{position:fixed;inset:0;pointer-events:none;z-index:1}
+
+/* ─── NAVIGATION ─── */
+#global-nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:24px 40px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+  background:rgba(245,240,235,0.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,0,0,0.06);pointer-events:none;
+}
+#global-nav a{pointer-events:auto;transition:opacity 0.3s;color:#333}
+#global-nav a:hover{opacity:0.5}
+#global-nav .nav-left,#global-nav .nav-right{display:flex;gap:32px}
+#global-nav .nav-brand{font-size:10px;letter-spacing:0.2em;color:#999}
+
+/* ─── TRANSITION OVERLAY ─── */
+#transition-overlay{
+  position:fixed;inset:0;background:#000;z-index:9999;
+  opacity:0;pointer-events:none;transition:opacity 0.3s ease;
+}
+#transition-overlay.active{opacity:1;pointer-events:all}
+
+/* ─── MUSEUM PLAQUE ─── */
+#museum-plaque{
+  position:fixed;bottom:32px;left:40px;z-index:90;
+  font-size:10px;line-height:1.6;letter-spacing:0.05em;
+  color:#666;
+  opacity:0;transform:translateY(10px);
+  transition:opacity 0.15s, transform 0.15s;pointer-events:none;
+  max-width:400px;
+  background:rgba(255,255,255,0.9);padding:12px 16px;border-radius:4px;border:1px solid rgba(0,0,0,0.06);
+}
+#museum-plaque.visible{opacity:1;transform:translateY(0)}
+#museum-plaque .plaque-title{color:#1a1a1a;font-size:11px}
+
+/* ─── KEYBOARD HINT ─── */
+#keyboard-hint{
+  position:fixed;bottom:32px;right:40px;z-index:90;
+  font-size:9px;letter-spacing:0.1em;color:#999;opacity:0.6;
+  pointer-events:none;text-align:right;line-height:1.8;
+  transition:opacity 0.3s;
+}
+#keyboard-hint kbd{display:inline-block;border:1px solid rgba(0,0,0,0.15);padding:1px 6px;border-radius:2px;font-size:8px;font-family:inherit;margin:0 2px}
+
+/* ─── SCROLL INDICATOR ─── */
+.scroll-indicator{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  font-size:9px;letter-spacing:0.15em;color:var(--institution-text-secondary);opacity:0.5;
+  animation:bob 2s ease-in-out infinite;
+}
+.scroll-indicator .arrow{font-size:16px;line-height:1}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* ─── BLOCK REVEAL ─── */
+.block-reveal{position:relative;background:#fff;overflow:hidden;border-radius:4px}
+.block-reveal .art-surface{width:100%;height:100%;object-fit:cover;background-size:cover;background-position:center;opacity:0;transition:opacity 0.1s}
+.block-reveal.revealed .art-surface{opacity:1}
+.block-reveal::after{
+  content:'';position:absolute;inset:0;background:#f5f0eb;
+  transform:scaleX(1);transform-origin:right;
+  transition:transform 0.8s cubic-bezier(0.77,0,0.175,1);
+}
+.block-reveal.revealed::after{transform:scaleX(0);transform-origin:left}
+
+/* ─── VIEW SYSTEM ─── */
+#app{min-height:100vh;position:relative;z-index:2}
+.view{display:none;animation:fadeIn 0.6s ease}
+.view.active{display:block}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ─── HOME ─── */
+#view-home{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;padding:120px 40px 80px;position:relative;
+}
+#home-artwork{width:85vw;max-width:1400px;height:70vh;position:relative;cursor:pointer}
+.home-meta{text-align:center;margin-top:48px;font-size:11px;letter-spacing:0.1em;color:var(--institution-text-secondary)}
+.home-meta h1{font-size:11px;font-weight:400;letter-spacing:0.2em;margin-bottom:8px;color:var(--institution-text);transition:opacity 0.6s}
+.home-meta .separator{width:200px;height:1px;background:var(--institution-text-secondary);margin:24px auto;opacity:0.3}
+.home-meta .home-featured-info{font-size:10px;margin-top:16px;opacity:0.6;letter-spacing:0.12em}
+.home-progress{display:flex;gap:8px;margin-top:32px;justify-content:center}
+.home-progress .dot{width:6px;height:6px;border-radius:50%;background:var(--institution-text-secondary);opacity:0.2;cursor:pointer;transition:all 0.3s}
+.home-progress .dot.active{opacity:0.8;width:24px;border-radius:3px}
+.home-enter-hint{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:0.15em;color:var(--institution-text-secondary);opacity:0;transition:opacity 0.6s}
+#home-artwork:hover .home-enter-hint{opacity:0.6}
+
+/* ─── ARCHIVE WALL ─── */
+#view-archive{padding:120px 40px 160px}
+.archive-section-label{text-align:center;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:40px;color:var(--institution-text-secondary)}
+.archive-section-label span{opacity:0.5}
+#archive-grid{
+  display:grid;grid-template-columns:repeat(12,1fr);
+  grid-auto-rows:minmax(180px,auto);gap:4px;
+  max-width:1600px;margin:0 auto;
+}
+.archive-item{position:relative;cursor:pointer;min-height:220px;overflow:hidden}
+.archive-item:nth-child(1){grid-column:span 7;grid-row:span 3}
+.archive-item:nth-child(2){grid-column:span 5;grid-row:span 2}
+.archive-item:nth-child(3){grid-column:span 4;grid-row:span 2}
+.archive-item:nth-child(4){grid-column:span 3;grid-row:span 3}
+.archive-item:nth-child(5){grid-column:span 5;grid-row:span 2}
+.archive-item:nth-child(6){grid-column:span 6;grid-row:span 2}
+.archive-item:nth-child(7){grid-column:span 6;grid-row:span 3}
+.archive-item:nth-child(8){grid-column:span 3;grid-row:span 2}
+.archive-item:nth-child(9){grid-column:span 3;grid-row:span 2}
+.archive-item:nth-child(10){grid-column:span 4;grid-row:span 2}
+.archive-item:nth-child(11){grid-column:span 5;grid-row:span 2}
+.archive-item:nth-child(12){grid-column:span 3;grid-row:span 3}
+.archive-item:nth-child(13){grid-column:span 5;grid-row:span 2}
+.archive-item:nth-child(14){grid-column:span 4;grid-row:span 2}
+.archive-item:nth-child(15){grid-column:span 3;grid-row:span 2}
+.archive-item:nth-child(16){grid-column:span 6;grid-row:span 2}
+.archive-item:nth-child(17){grid-column:span 6;grid-row:span 3}
+.archive-item:nth-child(18){grid-column:span 6;grid-row:span 2}
+.archive-item .block-reveal{position:absolute;inset:0}
+.archive-item .art-surface{position:absolute;inset:0}
+
+/* Archive item overlay */
+.archive-item-overlay{
+  position:absolute;inset:0;z-index:5;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding:20px;
+  background:linear-gradient(0deg,rgba(0,0,0,0.8) 0%,rgba(0,0,0,0.2) 50%,transparent 100%);
+  opacity:0;transition:opacity 0.4s;
+}
+.archive-item:hover .archive-item-overlay{opacity:1}
+.archive-item-overlay .ao-title{font-size:12px;letter-spacing:0.08em;color:#fff;margin-bottom:4px}
+.archive-item-overlay .ao-meta{font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.5);display:flex;gap:12px}
+.archive-item-overlay .ao-artist{font-size:9px;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.3);margin-bottom:6px}
+
+/* ─── EVIDENCE ROOM ─── */
+#view-evidence{padding:80px 0 160px}
+.evidence-back{
+  display:inline-flex;align-items:center;gap:8px;padding:24px 40px;
+  font-size:11px;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s;position:relative;z-index:10;
+}
+.evidence-back:hover{opacity:0.5}
+.evidence-nav-arrows{
+  display:inline-flex;gap:4px;margin-left:24px;padding-left:24px;
+  border-left:1px solid rgba(115,115,115,0.2);
+}
+.evidence-nav-arrows button{
+  padding:4px 12px;font-size:10px;letter-spacing:0.05em;
+  border:1px solid rgba(115,115,115,0.2);transition:all 0.3s;color:var(--institution-text-secondary);
+}
+.evidence-nav-arrows button:hover{border-color:var(--realm-text,var(--institution-text));color:var(--realm-text,var(--institution-text))}
+.evidence-hero .art-surface{width:100%;height:100%;background-size:cover;background-position:center}
+.evidence-title-block{max-width:600px;margin:0 auto;padding:0 40px;text-align:center}
+.evidence-title-block .separator{width:100%;height:1px;background:var(--institution-text-secondary);opacity:0.2;margin:24px 0}
+.evidence-title-block h2{font-size:18px;font-weight:400;letter-spacing:0.15em;margin-bottom:24px;font-family:var(--realm-secondary,var(--institution-secondary))}
+.evidence-title-block p{font-size:13px;line-height:1.8;color:var(--institution-text-secondary);font-family:var(--realm-secondary,var(--institution-secondary));font-style:italic}
+.evidence-meta{display:flex;justify-content:center;gap:48px;margin-top:48px;font-size:10px;letter-spacing:0.08em;color:var(--institution-text-secondary);text-transform:uppercase;flex-wrap:wrap}
+.evidence-details{max-width:900px;margin:120px auto 0;padding:0 40px}
+.detail-item{margin-bottom:80px}
+.detail-item h4{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--institution-text-secondary);margin-bottom:16px}
+.detail-item .detail-visual{width:100%;height:400px;background:var(--institution-surface);position:relative;margin-bottom:12px;overflow:hidden}
+.detail-item .detail-caption{font-size:11px;color:var(--institution-text-secondary);font-style:italic;font-family:var(--realm-secondary,var(--institution-secondary))}
+.evidence-artist-link{
+  margin-top:80px;text-align:center;padding:0 40px;
+}
+.evidence-artist-link a{
+  font-size:11px;letter-spacing:0.15em;text-transform:uppercase;
+  border-bottom:1px solid currentColor;padding-bottom:4px;transition:opacity 0.3s;
+}
+.evidence-artist-link a:hover{opacity:0.5}
+
+/* ─── ARTISTS DIRECTORY ─── */
+#view-artists{padding:120px 40px 160px;max-width:1200px;margin:0 auto}
+#view-artists h2{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:80px;text-align:center}
+.artist-directory-item{
+  border-top:1px solid rgba(115,115,115,0.15);padding:32px 0;
+  display:flex;justify-content:space-between;align-items:baseline;cursor:pointer;transition:all 0.3s;
+}
+.artist-directory-item:hover{opacity:0.5;padding-left:20px}
+.artist-directory-item:last-child{border-bottom:1px solid rgba(115,115,115,0.15)}
+.artist-directory-item .artist-name{font-size:24px;font-family:var(--institution-secondary);font-weight:300;letter-spacing:0.02em}
+.artist-directory-item .artist-theme{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--institution-text-secondary)}
+.artist-directory-item .artist-count{font-size:9px;color:var(--institution-text-secondary);opacity:0.4;letter-spacing:0.05em;margin-left:12px}
+
+/* ─── COLLECTIONS ─── */
+#view-collections{padding:120px 40px 160px}
+#view-collections h2{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:60px;text-align:center}
+.collections-grid{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.collections-item{position:relative;min-height:300px;cursor:pointer;overflow:hidden}
+.collections-item:nth-child(1){grid-column:span 2;grid-row:span 2}
+.collections-item .block-reveal{position:absolute;inset:0}
+.collections-item .collection-overlay{
+  position:absolute;inset:0;z-index:5;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;padding:40px;
+  background:rgba(0,0,0,0.4);opacity:0;transition:opacity 0.5s;
+}
+.collections-item:hover .collection-overlay{opacity:1}
+.collections-item .collection-title{font-size:16px;font-family:var(--institution-secondary);font-weight:300;letter-spacing:0.08em;margin-bottom:8px}
+.collections-item .collection-count{font-size:10px;letter-spacing:0.12em;color:var(--institution-text-secondary)}
+
+/* ─── REALM ─── */
+#view-realm{min-height:100vh;padding:120px 0 160px}
+.realm-header{text-align:center;margin-bottom:80px;padding:0 40px}
+.realm-header h2{font-size:32px;font-weight:300;font-family:var(--realm-secondary,var(--institution-secondary));letter-spacing:0.04em;margin-bottom:12px}
+.realm-header .realm-theme{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--realm-accent,var(--institution-text-secondary))}
+.realm-header .realm-statement{max-width:500px;margin:24px auto 0;font-size:12px;line-height:1.8;color:var(--realm-accent,var(--institution-text-secondary));font-style:italic;font-family:var(--realm-secondary,var(--institution-secondary))}
+.realm-actions{display:flex;justify-content:center;gap:32px;margin-top:48px}
+.realm-actions a{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--realm-accent,var(--institution-text-secondary));transition:color 0.3s}
+.realm-actions a:hover{color:var(--realm-text,var(--institution-text))}
+.realm-wall{max-width:1400px;margin:80px auto 0;padding:0 40px;display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.realm-wall .archive-item{min-height:300px}
+.realm-wall .archive-item:nth-child(1){grid-column:span 2;grid-row:span 2}
+.realm-wall .archive-item:nth-child(4){grid-column:span 2}
+
+/* ─── KNOW THE ARTIST ─── */
+#view-know{min-height:100vh;padding:120px 0 160px}
+.know-header{text-align:center;margin-bottom:60px;padding:0 40px}
+.know-header h2{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px}
+.know-header .know-sub{font-size:18px;font-family:var(--realm-secondary,var(--institution-secondary));font-weight:300;font-style:italic;color:var(--realm-accent,var(--institution-text-secondary))}
+.know-nav{display:flex;justify-content:center;gap:24px;margin-bottom:80px;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;flex-wrap:wrap;padding:0 20px}
+.know-nav button{color:var(--institution-text-secondary);padding:8px 0;border-bottom:1px solid transparent;transition:all 0.3s}
+.know-nav button.active,.know-nav button:hover{color:var(--realm-text,var(--institution-text));border-bottom-color:currentColor}
+.know-chapter{display:none;max-width:1000px;margin:0 auto;padding:0 40px;animation:fadeIn 0.5s ease}
+.know-chapter.active{display:block}
+
+#constellation-canvas{width:100%;height:500px;background:transparent;margin:40px 0;cursor:pointer;border-radius:4px}
+.constellation-legend{display:flex;justify-content:center;gap:32px;margin-top:24px;font-size:10px;letter-spacing:0.05em;color:var(--institution-text-secondary);flex-wrap:wrap}
+.constellation-legend span{display:flex;align-items:center;gap:6px;cursor:pointer;transition:opacity 0.3s}
+.constellation-legend span:hover{opacity:0.6}
+.constellation-legend .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+.constellation-info-panel{
+  margin:32px auto 0;max-width:600px;padding:24px 32px;
+  background:var(--institution-surface);border-left:2px solid var(--realm-text,var(--institution-text));
+  opacity:0;transform:translateY(10px);transition:all 0.4s;
+  display:none;
+}
+.constellation-info-panel.visible{display:block;opacity:1;transform:translateY(0)}
+.constellation-info-panel .cip-name{font-size:14px;font-family:var(--realm-secondary,var(--institution-secondary));font-weight:400;margin-bottom:4px}
+.constellation-info-panel .cip-category{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--institution-text-secondary);margin-bottom:12px}
+.constellation-info-panel .cip-connection{font-size:12px;line-height:1.6;color:var(--institution-text-secondary);font-style:italic;font-family:var(--realm-secondary,var(--institution-secondary))}
+.constellation-info-panel .cip-close{float:right;font-size:16px;cursor:pointer;opacity:0.4;transition:opacity 0.3s}
+.constellation-info-panel .cip-close:hover{opacity:1}
+
+.timeline{position:relative;padding:40px 0}
+.timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(115,115,115,0.2);transform:translateX(-50%)}
+.timeline-item{position:relative;width:calc(50% - 40px);margin-bottom:60px}
+.timeline-item:nth-child(odd){margin-left:auto;padding-left:40px}
+.timeline-item:nth-child(even){margin-right:auto;padding-right:40px;text-align:right}
+.timeline-item::before{content:'';position:absolute;width:8px;height:8px;background:var(--realm-bg,var(--institution-bg));border:1px solid var(--institution-text-secondary);border-radius:50%;top:4px}
+.timeline-item:nth-child(odd)::before{left:-4px}
+.timeline-item:nth-child(even)::before{right:-4px}
+.timeline-year{font-size:10px;letter-spacing:0.15em;color:var(--institution-text-secondary);margin-bottom:8px}
+.timeline-title{font-size:16px;font-family:var(--realm-secondary,var(--institution-secondary));font-weight:300;margin-bottom:8px}
+.timeline-desc{font-size:12px;line-height:1.6;color:var(--institution-text-secondary);font-family:var(--realm-secondary,var(--institution-secondary))}
+
+.dna-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px 64px;margin-top:40px}
+.dna-item h4{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;color:var(--institution-text-secondary)}
+.dna-bar-track{width:100%;height:2px;background:rgba(115,115,115,0.15);position:relative}
+.dna-bar-fill{height:100%;background:var(--realm-text,var(--institution-text));transition:width 1s cubic-bezier(0.22,1,0.36,1)}
+.dna-value{font-size:10px;letter-spacing:0.05em;margin-top:6px;color:var(--institution-text-secondary)}
+
+.quiz-container{max-width:600px;margin:40px auto 0;text-align:center}
+.quiz-question{font-size:16px;font-family:var(--realm-secondary,var(--institution-secondary));font-weight:300;margin-bottom:40px;line-height:1.6}
+.quiz-options{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+.quiz-option{padding:16px 32px;border:1px solid rgba(115,115,115,0.2);font-size:12px;letter-spacing:0.05em;transition:all 0.3s;cursor:pointer;min-width:140px}
+.quiz-option:hover{border-color:var(--realm-text,var(--institution-text));background:rgba(229,229,229,0.03);transform:translateY(-2px)}
+.quiz-result{margin-top:60px;padding:40px;border:1px solid rgba(115,115,115,0.15)}
+.quiz-result .alignment{font-size:48px;font-family:var(--realm-secondary,var(--institution-secondary));font-weight:300;margin:16px 0}
+.quiz-result .alignment-label{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--institution-text-secondary)}
+.quiz-result .interpretation{font-size:12px;line-height:1.8;color:var(--institution-text-secondary);font-family:var(--realm-secondary,var(--institution-secondary));margin-top:16px}
+
+.genealogy-list{margin-top:40px}
+.genealogy-item{display:flex;align-items:baseline;gap:16px;padding:20px 0;border-bottom:1px solid rgba(115,115,115,0.1);flex-wrap:wrap;transition:padding-left 0.3s}
+.genealogy-item:hover{padding-left:12px;border-bottom-color:rgba(115,115,115,0.3)}
+.genealogy-item .genealogy-type{font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--institution-text-secondary);min-width:80px}
+.genealogy-item .genealogy-name{font-size:14px;font-family:var(--realm-secondary,var(--institution-secondary))}
+.genealogy-item .genealogy-kind{font-size:10px;color:var(--institution-text-secondary);margin-left:auto;font-style:italic}
+
+/* ─── PROCESS ─── */
+#view-process{padding:120px 40px 160px;max-width:900px;margin:0 auto}
+#view-process h2{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:80px;text-align:center}
+.process-file{border-top:1px solid rgba(115,115,115,0.15);padding:32px 0;cursor:pointer;transition:all 0.3s}
+.process-file:hover{opacity:0.5;padding-left:16px}
+.process-file:last-child{border-bottom:1px solid rgba(115,115,115,0.15)}
+.process-file-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.process-file-name{font-size:14px;font-family:var(--institution-secondary);letter-spacing:0.02em}
+.process-file-meta{font-size:10px;letter-spacing:0.05em;color:var(--institution-text-secondary)}
+.process-file .process-file-expand{font-size:16px;transition:transform 0.3s}
+.process-file.open .process-file-expand{transform:rotate(45deg)}
+.process-file-body{max-height:0;overflow:hidden;transition:max-height 0.6s ease}
+.process-file.open .process-file-body{max-height:500px;margin-top:24px}
+.process-file-content{padding:24px;background:var(--institution-surface);font-size:12px;line-height:1.8;color:var(--institution-text-secondary);font-family:var(--institution-secondary);border-left:2px solid rgba(115,115,115,0.2)}
+
+/* ─── ABOUT ─── */
+#view-about{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:120px 40px;text-align:center}
+#view-about .archive-record{max-width:500px}
+#view-about h2{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:40px}
+#view-about .record-body{font-size:16px;line-height:2;font-family:var(--institution-secondary);font-weight:300;font-style:italic;margin-bottom:60px}
+#view-about .record-footer{font-size:10px;letter-spacing:0.15em;color:var(--institution-text-secondary);line-height:2}
+
+/* ─── FOOTER ─── */
+.global-footer{padding:80px 40px 60px;text-align:center;font-size:10px;letter-spacing:0.15em;color:var(--institution-text-secondary);line-height:2;position:relative;z-index:2}
+.global-footer .footer-context{font-size:9px;opacity:0.4;margin-top:4px;letter-spacing:0.1em;transition:opacity 0.3s}
+.global-footer .footer-motto{margin-top:8px;font-size:9px;opacity:0.6}
+.global-footer .footer-divider{width:40px;height:1px;background:var(--institution-text-secondary);margin:16px auto;opacity:0.2}
+
+/* ═══════════════════════════════════════════════════════════════
+   REALM ATMOSPHERES
+   ═══════════════════════════════════════════════════════════════ */
+.realm-melcher{--realm-bg:#e8e0d0;--realm-text:#1a1a1a;--realm-secondary:'IBM Plex Mono',monospace;--realm-accent:#8a7f6b}
+.realm-elena{--realm-bg:#f4f1ea;--realm-text:#1a1a1a;--realm-secondary:'Cormorant Garamond',serif;--realm-accent:#8a7f6b}
+.realm-kaito{--realm-bg:#f0ece2;--realm-text:#1a1a1a;--realm-secondary:'Noto Serif JP',serif;--realm-accent:#5c5c5c}
+.realm-sara{--realm-bg:#f5e8e0;--realm-text:#1a1a1a;--realm-secondary:'Space Grotesk',sans-serif;--realm-accent:#cc3333}
+.realm-marcus{--realm-bg:#e8e2d8;--realm-text:#1a1a1a;--realm-secondary:'Inter',sans-serif;--realm-accent:#666666}
+.realm-yuki{--realm-bg:#e8e0f5;--realm-text:#1a1a1a;--realm-secondary:'Space Grotesk',sans-serif;--realm-accent:#7c3aed}
+.realm-amara{--realm-bg:#f0e8d0;--realm-text:#1a1a1a;--realm-secondary:'Playfair Display',serif;--realm-accent:#b8860b}
+.realm-viktor{--realm-bg:#e0e8f0;--realm-text:#1a1a1a;--realm-secondary:'Space Grotesk',sans-serif;--realm-accent:#2a7fa0}
+
+/* ═══════════════════════════════════════════════════════════════
+   ART SURFACE GENERATORS — ENHANCED WITH ANIMATIONS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── MELCHER: Brutalist Machines ─── */
+.art-melcher-01{
+  background:linear-gradient(160deg,#c0392b 0%,#e67e22 30%,#f39c12 60%,#d4a04a 100%);
+  position:relative;
+}
+.art-melcher-01::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 96%,rgba(255,255,255,0.25) 96%),linear-gradient(0deg,transparent 96%,rgba(44,62,80,0.15) 96%);
+  background-size:60px 60px;
+  animation:gridPulse 8s ease-in-out infinite;
+}
+.art-melcher-01::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 40%,rgba(231,76,60,0.25) 0%,transparent 50%),
+             radial-gradient(circle at 70% 80%,rgba(46,204,113,0.2) 0%,transparent 40%);
+  animation:drift 12s ease-in-out infinite;
+}
+
+.art-melcher-02{
+  background:linear-gradient(135deg,#2980b9 0%,#3498db 50%,#1abc9c 100%);
+  position:relative;
+}
+.art-melcher-02::before{
+  content:'';position:absolute;left:20%;top:10%;width:60%;height:80%;
+  background:linear-gradient(180deg,rgba(253,203,110,0.3) 0%,transparent 100%);
+  transform:perspective(800px) rotateX(15deg);
+  animation:shimmer 6s ease-in-out infinite;
+}
+.art-melcher-02::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent 0,transparent 39px,rgba(255,255,255,0.1) 40px);
+}
+
+.art-melcher-03{
+  background:#16a085;position:relative;
+}
+.art-melcher-03::before{
+  content:'';position:absolute;left:10%;top:20%;width:80%;height:60%;
+  background:conic-gradient(from 0deg at 50% 50%,rgba(231,76,60,0.3) 0deg,rgba(243,156,18,0.25) 90deg,rgba(231,76,60,0.3) 180deg,rgba(46,204,113,0.25) 270deg,rgba(231,76,60,0.3) 360deg);
+  border-radius:50%;
+  filter:blur(60px);
+  animation:rotateSlow 20s linear infinite;
+}
+.art-melcher-03::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(45deg,transparent 48%,rgba(255,255,255,0.12) 49%,rgba(255,255,255,0.12) 51%,transparent 52%);
+  background-size:80px 80px;
+}
+
+.art-melcher-04{
+  background:linear-gradient(180deg,#d35400 0%,#e67e22 50%,#f39c12 100%);
+  position:relative;
+}
+.art-melcher-04::before{
+  content:'';position:absolute;left:30%;top:0;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.2) 50%,transparent 100%);
+  animation:scanLine 4s ease-in-out infinite;
+}
+.art-melcher-04::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:30%;
+  background:linear-gradient(0deg,rgba(44,62,80,0.3) 0%,transparent 100%);
+}
+
+/* ─── ELENA: Watercolor Forests ─── */
+.art-elena-01{
+  background:linear-gradient(135deg,#27ae60 0%,#2ecc71 30%,#58d68d 60%,#a9dfbf 100%);
+  position:relative;
+}
+.art-elena-01::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 80%,rgba(144,238,144,0.3) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 20%,rgba(52,152,219,0.25) 0%,transparent 50%),
+             radial-gradient(ellipse at 50% 50%,rgba(241,196,15,0.2) 0%,transparent 60%);
+  animation:drift 15s ease-in-out infinite alternate;
+}
+.art-elena-01::after{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 50 Q25 30 50 50 T100 50' stroke='rgba(241,196,15,0.25)' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  opacity:0.8;
+}
+
+.art-elena-02{
+  background:linear-gradient(160deg,#1abc9c 0%,#48c9b0 50%,#85c1e9 100%);
+  position:relative;
+}
+.art-elena-02::before{
+  content:'';position:absolute;left:10%;top:30%;width:30%;height:40%;
+  background:radial-gradient(ellipse,rgba(241,196,15,0.3) 0%,transparent 70%);
+  filter:blur(30px);
+  animation:breathe 8s ease-in-out infinite;
+}
+.art-elena-02::after{
+  content:'';position:absolute;right:15%;top:20%;width:25%;height:50%;
+  background:radial-gradient(ellipse,rgba(52,152,219,0.25) 0%,transparent 70%);
+  filter:blur(25px);
+  animation:breathe 8s ease-in-out infinite 3s;
+}
+
+.art-elena-03{
+  background:linear-gradient(180deg,#229954 0%,#2ecc71 50%,#f1c40f 100%);
+  position:relative;
+}
+.art-elena-03::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,rgba(255,239,173,0.3) 0%,transparent 40%),
+             linear-gradient(240deg,rgba(129,199,132,0.3) 0%,transparent 40%);
+  animation:shift 10s ease-in-out infinite alternate;
+}
+.art-elena-03::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:40%;
+  background:linear-gradient(0deg,rgba(139,69,19,0.3) 0%,transparent 100%);
+}
+
+/* ─── KAITO: Japanese Ink ─── */
+.art-kaito-01{
+  background:linear-gradient(135deg,#f5f0e8 0%,#e8e0d0 30%,#f0ece2 60%,#fff8f0 100%);
+  position:relative;
+}
+.art-kaito-01::before{
+  content:'';position:absolute;left:25%;top:15%;width:50%;height:70%;
+  background:radial-gradient(ellipse at 50% 50%,rgba(180,50,30,0.15) 0%,transparent 60%);
+  filter:blur(40px);
+  animation:inkBreathe 12s ease-in-out infinite;
+}
+.art-kaito-01::after{
+  content:'';position:absolute;left:55%;top:30%;width:3px;height:40%;
+  background:linear-gradient(180deg,rgba(180,50,30,0.6) 0%,rgba(0,0,0,0.3) 50%,rgba(0,0,0,0.05) 100%);
+  transform:rotate(3deg);
+}
+
+.art-kaito-02{
+  background:linear-gradient(135deg,#e8e0d0 0%,#f5f0e8 50%,#ddd5c5 100%);
+  position:relative;
+}
+.art-kaito-02::before{
+  content:'';position:absolute;left:15%;top:25%;width:70%;height:50%;
+  background:linear-gradient(180deg,rgba(180,50,30,0.12) 0%,rgba(0,0,0,0.1) 40%,transparent 100%);
+  filter:blur(50px);
+  border-radius:50%;
+  animation:inkBloom 16s ease-in-out infinite;
+}
+.art-kaito-02::after{
+  content:'';position:absolute;right:25%;top:15%;width:2px;height:50%;
+  background:linear-gradient(180deg,rgba(0,0,0,0.4) 0%,rgba(180,50,30,0.2) 60%,transparent 100%);
+  transform:rotate(-2deg);
+}
+
+.art-kaito-03{
+  background:linear-gradient(135deg,#f0ece2 0%,#fff8f0 50%,#e8e0d0 100%);
+  position:relative;
+}
+.art-kaito-03::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 70% 30%,rgba(180,50,30,0.12) 0%,transparent 50%);
+}
+.art-kaito-03::after{
+  content:'';position:absolute;left:35%;bottom:25%;width:30%;height:4px;
+  background:linear-gradient(90deg,transparent,rgba(180,50,30,0.4),transparent);filter:blur(1px);
+}
+
+/* ─── SARA: Abstract Expressionism ─── */
+.art-sara-01{
+  background:linear-gradient(135deg,#c0392b 0%,#e74c3c 30%,#f39c12 60%,#f1c40f 100%);
+  position:relative;
+}
+.art-sara-01::before{
+  content:'';position:absolute;left:20%;top:30%;width:60%;height:40%;
+  background:radial-gradient(ellipse,rgba(255,60,60,0.5) 0%,rgba(200,30,30,0.25) 40%,transparent 70%);
+  filter:blur(40px);transform:rotate(-15deg);
+  animation:flare 6s ease-in-out infinite;
+}
+.art-sara-01::after{
+  content:'';position:absolute;right:10%;bottom:20%;width:40%;height:30%;
+  background:radial-gradient(ellipse,rgba(255,200,50,0.4) 0%,transparent 60%);
+  filter:blur(30px);
+  animation:flare 6s ease-in-out infinite 2s;
+}
+
+.art-sara-02{
+  background:linear-gradient(135deg,#e74c3c 0%,#8e44ad 50%,#f39c12 100%);
+  position:relative;
+}
+.art-sara-02::before{
+  content:'';position:absolute;left:0;top:40%;width:100%;height:30%;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,50,50,0.4) 30%,rgba(255,150,50,0.3) 70%,transparent 100%);
+  filter:blur(20px);
+  animation:scanLine 5s ease-in-out infinite;
+}
+.art-sara-02::after{
+  content:'';position:absolute;left:30%;top:10%;width:40%;height:80%;
+  background:radial-gradient(ellipse,rgba(255,255,200,0.15) 0%,transparent 50%);
+}
+
+.art-sara-03{
+  background:linear-gradient(135deg,#8e44ad 0%,#e74c3c 50%,#f1c40f 100%);position:relative;
+}
+.art-sara-03::before{
+  content:'';position:absolute;inset:0;
+  background:conic-gradient(from 45deg at 60% 40%,rgba(255,50,50,0.3) 0deg,rgba(50,50,255,0.2) 120deg,rgba(255,200,50,0.25) 240deg,rgba(255,50,50,0.3) 360deg);
+  filter:blur(60px);
+  animation:rotateSlow 25s linear infinite;
+}
+
+/* ─── MARCUS: Documentary Photography ─── */
+.art-marcus-01{
+  background:linear-gradient(135deg,#5d6d7e 0%,#7f8c8d 30%,#aeb6bf 60%,#d5dbdb 100%);
+  position:relative;
+}
+.art-marcus-01::before{
+  content:'';position:absolute;left:15%;top:20%;width:70%;height:60%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.15) 0%,rgba(200,200,200,0.08) 100%);
+  filter:blur(2px);
+  animation:shimmer 10s ease-in-out infinite;
+}
+.art-marcus-01::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(0,0,0,0.2) 0%,transparent 20%,transparent 80%,rgba(0,0,0,0.2) 100%);
+}
+
+.art-marcus-02{
+  background:linear-gradient(135deg,#D4A76A 0%,#C4955B 50%,#E8C99B 100%);position:relative;
+}
+.art-marcus-02::before{
+  content:'';position:absolute;left:30%;top:0;width:40%;height:100%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.12) 0%,rgba(200,200,200,0.06) 100%);
+  animation:shift 8s ease-in-out infinite alternate;
+}
+.art-marcus-02::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:25%;
+  background:linear-gradient(0deg,rgba(0,0,0,0.3) 0%,transparent 100%);
+}
+
+.art-marcus-03{
+  background:linear-gradient(135deg,#2c3e50 0%,#5d6d7e 50%,#aeb6bf 100%);position:relative;
+}
+.art-marcus-03::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 40% 60%,rgba(255,255,255,0.12) 0%,transparent 50%);
+  animation:breathe 12s ease-in-out infinite;
+}
+.art-marcus-03::after{
+  content:'';position:absolute;top:30%;left:20%;width:60%;height:2px;
+  background:rgba(255,255,255,0.2);
+}
+
+/* ─── YUKI: Anime & Digital Surrealism ─── */
+.art-yuki-01{
+  background:linear-gradient(135deg,#8e44ad 0%,#9b59b6 30%,#a569bd 60%,#d2b4de 100%);
+  position:relative;
+}
+.art-yuki-01::before{
+  content:'';position:absolute;left:20%;top:25%;width:60%;height:50%;
+  background:radial-gradient(ellipse,rgba(167,139,250,0.4) 0%,rgba(139,92,246,0.2) 40%,transparent 70%);
+  filter:blur(30px);
+  animation:neonBreathe 8s ease-in-out infinite;
+}
+.art-yuki-01::after{
+  content:'';position:absolute;right:15%;top:15%;width:20%;height:30%;
+  background:radial-gradient(circle,rgba(196,181,253,0.3) 0%,transparent 60%);
+  filter:blur(20px);
+  animation:neonBreathe 8s ease-in-out infinite 2s;
+}
+
+.art-yuki-02{
+  background:linear-gradient(135deg,#e74c3c 0%,#8e44ad 50%,#3498db 100%);position:relative;
+}
+.art-yuki-02::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,rgba(167,139,250,0.2) 0%,transparent 50%),
+             linear-gradient(300deg,rgba(139,92,246,0.15) 0%,transparent 50%);
+  animation:shift 12s ease-in-out infinite alternate;
+}
+.art-yuki-02::after{
+  content:'';position:absolute;left:50%;top:30%;width:3px;height:40%;
+  background:linear-gradient(180deg,rgba(255,255,255,0.5) 0%,transparent 100%);
+  transform:translateX(-50%);
+  animation:beamPulse 4s ease-in-out infinite;
+}
+
+.art-yuki-03{
+  background:linear-gradient(135deg,#2c3e50 0%,#8e44ad 50%,#e74c3c 100%);position:relative;
+}
+.art-yuki-03::before{
+  content:'';position:absolute;left:10%;top:10%;width:80%;height:80%;
+  background:conic-gradient(from 0deg at 50% 50%,rgba(167,139,250,0.2) 0deg,rgba(139,92,246,0.15) 120deg,rgba(255,255,255,0.1) 240deg,rgba(167,139,250,0.2) 360deg);
+  filter:blur(50px);
+  animation:rotateSlow 30s linear infinite;
+}
+
+/* ─── AMARA: Afrofuturist Textiles ─── */
+.art-amara-01{
+  background:linear-gradient(135deg,#d4a04a 0%,#c0392b 30%,#8e44ad 60%,#2980b9 100%);
+  position:relative;
+}
+.art-amara-01::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 18px,rgba(255,255,255,0.12) 18px,rgba(255,255,255,0.12) 20px),
+             repeating-linear-gradient(90deg,transparent,transparent 18px,rgba(255,215,0,0.1) 18px,rgba(255,215,0,0.1) 20px);
+  animation:gridPulse 10s ease-in-out infinite;
+}
+.art-amara-01::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 40%,rgba(255,215,0,0.2) 0%,transparent 50%),
+             radial-gradient(ellipse at 70% 60%,rgba(192,57,43,0.15) 0%,transparent 40%);
+  animation:drift 14s ease-in-out infinite;
+}
+
+.art-amara-02{
+  background:linear-gradient(135deg,#f39c12 0%,#d35400 50%,#c0392b 100%);position:relative;
+}
+.art-amara-02::before{
+  content:'';position:absolute;left:10%;top:10%;width:80%;height:80%;
+  background:conic-gradient(from 0deg at 50% 50%,rgba(255,215,0,0.2) 0deg,rgba(192,57,43,0.15) 90deg,rgba(142,68,173,0.15) 180deg,rgba(41,128,185,0.12) 270deg,rgba(255,215,0,0.2) 360deg);
+  border-radius:50%;
+  filter:blur(40px);
+  animation:rotateSlow 25s linear infinite;
+}
+.art-amara-02::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(45deg,transparent,transparent 14px,rgba(255,215,0,0.06) 14px,rgba(255,215,0,0.06) 16px);
+}
+
+.art-amara-03{
+  background:linear-gradient(180deg,#8e44ad 0%,#d4a04a 50%,#c0392b 100%);position:relative;
+}
+.art-amara-03::before{
+  content:'';position:absolute;left:15%;top:15%;width:70%;height:70%;
+  background:radial-gradient(ellipse at 50% 50%,rgba(255,215,0,0.25) 0%,rgba(192,57,43,0.15) 30%,transparent 70%);
+  filter:blur(50px);
+  animation:breathe 12s ease-in-out infinite;
+}
+.art-amara-03::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:40%;
+  background:linear-gradient(0deg,rgba(139,69,19,0.2) 0%,transparent 100%);
+}
+
+/* ─── VIKTOR: Sonic Architecture ─── */
+.art-viktor-01{
+  background:linear-gradient(135deg,#2980b9 0%,#3498db 30%,#5dade2 60%,#85c1e9 100%);
+  position:relative;
+}
+.art-viktor-01::before{
+  content:'';position:absolute;left:0;top:30%;width:100%;height:40%;
+  background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.2) 20%,rgba(255,255,255,0.1) 50%,rgba(255,255,255,0.2) 80%,transparent 100%);
+  filter:blur(20px);
+  animation:scanLine 6s ease-in-out infinite;
+}
+.art-viktor-01::after{
+  content:'';position:absolute;left:20%;top:10%;width:60%;height:80%;
+  background:radial-gradient(ellipse,rgba(255,255,255,0.15) 0%,transparent 50%);
+  animation:shimmer 8s ease-in-out infinite;
+}
+
+.art-viktor-02{
+  background:linear-gradient(135deg,#1abc9c 0%,#2ecc71 50%,#3498db 100%);position:relative;
+}
+.art-viktor-02::before{
+  content:'';position:absolute;left:50%;top:50%;width:60%;height:60%;
+  background:radial-gradient(circle at 50% 50%,transparent 30%,rgba(255,255,255,0.15) 31%,transparent 32%,rgba(255,255,255,0.1) 46%,transparent 47%);
+  transform:translate(-50%,-50%);
+  animation:sonarPulse 6s ease-in-out infinite;
+}
+.art-viktor-02::after{
+  content:'';position:absolute;left:50%;top:50%;width:40%;height:40%;
+  background:radial-gradient(circle at 50% 50%,transparent 20%,rgba(255,255,255,0.12) 21%,transparent 22%,rgba(255,255,255,0.08) 35%,transparent 36%);
+  transform:translate(-50%,-50%);
+  animation:sonarPulse 6s ease-in-out infinite 2s;
+}
+
+.art-viktor-03{
+  background:linear-gradient(180deg,#2c3e50 0%,#3498db 50%,#85c1e9 100%);position:relative;
+}
+.art-viktor-03::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 45%,rgba(255,255,255,0.1) 48%,rgba(255,255,255,0.1) 52%,transparent 55%),
+             linear-gradient(0deg,transparent 45%,rgba(255,255,255,0.08) 48%,rgba(255,255,255,0.08) 52%,transparent 55%);
+  background-size:120px 120px;
+  animation:gridPulse 12s ease-in-out infinite;
+}
+.art-viktor-03::after{
+  content:'';position:absolute;left:25%;top:20%;width:50%;height:60%;
+  background:radial-gradient(ellipse at 50% 40%,rgba(255,255,255,0.15) 0%,transparent 50%);
+  filter:blur(30px);
+  animation:breathe 10s ease-in-out infinite;
+}
+
+/* ─── ANIMATION KEYFRAMES ─── */
+@keyframes gridPulse{0%,100%{opacity:1}50%{opacity:0.6}}
+@keyframes drift{0%,100%{transform:translate(0,0)}33%{transform:translate(2%,-1%)}66%{transform:translate(-1%,2%)}}
+@keyframes shimmer{0%,100%{opacity:0.8}50%{opacity:1}}
+@keyframes rotateSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes scanLine{0%,100%{transform:translateX(-5%)}50%{transform:translateX(5%)}}
+@keyframes breathe{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+@keyframes shift{0%,100%{transform:translate(0,0)}50%{transform:translate(1%,-1%)}}
+@keyframes inkBreathe{0%,100%{opacity:0.4;transform:scale(1)}50%{opacity:0.7;transform:scale(1.08)}}
+@keyframes inkBloom{0%,100%{opacity:0.3;filter:blur(50px)}50%{opacity:0.6;filter:blur(30px)}}
+@keyframes flare{0%,100%{opacity:0.5;transform:rotate(-15deg)}50%{opacity:1;transform:rotate(-10deg)}}
+@keyframes neonBreathe{0%,100%{opacity:0.4;filter:blur(30px)}50%{opacity:0.8;filter:blur(20px)}}
+@keyframes beamPulse{0%,100%{opacity:0.3}50%{opacity:0.8}}
+@keyframes sonarPulse{0%,100%{opacity:0.3;transform:translate(-50%,-50%) scale(1)}50%{opacity:0.8;transform:translate(-50%,-50%) scale(1.1)}}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:768px){
+  #archive-grid{grid-template-columns:repeat(2,1fr)}
+  .archive-item:nth-child(n){grid-column:span 1!important;grid-row:span 1!important}
+  .realm-wall{grid-template-columns:1fr}
+  .realm-wall .archive-item:nth-child(n){grid-column:span 1!important;grid-row:span 1!important}
+  .dna-grid{grid-template-columns:1fr}
+  .timeline::before{left:20px}
+  .timeline-item{width:calc(100% - 60px);margin-left:60px!important;padding-left:20px!important;text-align:left!important}
+  .timeline-item:nth-child(even)::before,.timeline-item:nth-child(odd)::before{left:-4px;right:auto}
+  #global-nav{padding:16px 20px;font-size:9px;gap:12px;flex-wrap:wrap}
+  #global-nav .nav-left,#global-nav .nav-right{gap:12px}
+  #global-nav .nav-brand{display:none}
+  .know-nav{gap:12px}
+  .collections-grid{grid-template-columns:1fr}
+  .collections-item:nth-child(n){grid-column:span 1!important;grid-row:span 1!important}
+  .collections-item{min-height:200px}
+  #home-artwork{width:100vw;height:50vh}
+  #museum-plaque{left:20px;bottom:20px;max-width:250px}
+  #keyboard-hint{display:none}
+  .evidence-meta{gap:24px}
+  .artist-directory-item .artist-name{font-size:18px}
+  .realm-header h2{font-size:24px}
+  .home-meta h1{font-size:10px}
+  #global-nav .nav-left,#global-nav .nav-right{font-size:9px}
+}
+
+/* ART SURFACE BASE */
+.art-surface{width:100%;height:100%;background-size:cover;background-position:center}
+
+/* ════════════════════════════════════════════════════════════
+   ARTWORKS — 36 CSS-GENERATED ABSTRACT WORKS
+   ════════════════════════════════════════════════════════════ */
+
+/* COLOR FIELD (6) */
+.art-cf-01{background:linear-gradient(160deg,#e8d5c4 0%,#c9b8a8 40%,#a89080 70%,#8a7060 100%);position:relative}
+.art-cf-02{background:linear-gradient(135deg,#d4e5ed 0%,#a8c8d8 30%,#7aa0b0 60%,#5c8090 100%);position:relative}
+.art-cf-03{background:linear-gradient(180deg,#f0e8d8 0%,#e0d4c0 50%,#c8b8a0 100%);position:relative}
+.art-cf-04{background:linear-gradient(45deg,#e0d8e8 0%,#c8b8d0 40%,#a898b0 70%,#907888 100%);position:relative}
+.art-cf-05{background:linear-gradient(120deg,#d8e0d0 0%,#b8c8a8 50%,#98a888 100%);position:relative}
+.art-cf-06{background:linear-gradient(90deg,#e8d0c0 0%,#d0b8a8 33%,#b8a090 66%,#a08878 100%);position:relative}
+
+.art-cf-01::before{content:'';position:absolute;left:20%;top:10%;width:60%;height:80%;background:linear-gradient(180deg,rgba(255,255,255,0.1) 0%,transparent 100%);filter:blur(40px);animation:drift 8s ease-in-out infinite alternate}
+.art-cf-02::before{content:'';position:absolute;left:10%;top:20%;width:80%;height:60%;background:linear-gradient(90deg,rgba(255,255,255,0.12) 0%,transparent 100%);filter:blur(50px);animation:drift 10s ease-in-out infinite alternate}
+.art-cf-03::before{content:'';position:absolute;left:30%;top:30%;width:40%;height:40%;background:radial-gradient(ellipse,rgba(255,255,255,0.15) 0%,transparent 70%);filter:blur(30px);animation:breathe 6s ease-in-out infinite}
+.art-cf-04::before{content:'';position:absolute;left:15%;top:15%;width:70%;height:70%;background:radial-gradient(ellipse,rgba(255,255,255,0.1) 0%,transparent 60%);filter:blur(40px);animation:drift 12s ease-in-out infinite alternate}
+.art-cf-05::before{content:'';position:absolute;left:25%;top:20%;width:50%;height:60%;background:linear-gradient(120deg,rgba(255,255,255,0.1) 0%,transparent 50%);filter:blur(35px);animation:breathe 8s ease-in-out infinite}
+.art-cf-06::before{content:'';position:absolute;left:20%;top:20%;width:60%;height:60%;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 50%);filter:blur(45px);animation:drift 9s ease-in-out infinite alternate}
+
+/* GEOMETRIC (6) */
+.art-geo-01{background:#f5f0e8;position:relative;overflow:hidden}
+.art-geo-02{background:#e8e0d8;position:relative;overflow:hidden}
+.art-geo-03{background:#d8e0e8;position:relative;overflow:hidden}
+.art-geo-04{background:#e8d8e0;position:relative;overflow:hidden}
+.art-geo-05{background:#d8e8d8;position:relative;overflow:hidden}
+.art-geo-06{background:#e0e0d8;position:relative;overflow:hidden}
+
+.art-geo-01::before{content:'';position:absolute;left:20%;top:20%;width:60%;height:60%;border:1px solid rgba(0,0,0,0.08);border-radius:50%;animation:spin 20s linear infinite}
+.art-geo-01::after{content:'';position:absolute;left:30%;top:30%;width:40%;height:40%;border:1px solid rgba(0,0,0,0.05);border-radius:50%;animation:spin 15s linear infinite reverse}
+.art-geo-02::before{content:'';position:absolute;left:10%;top:10%;width:80%;height:80%;background:linear-gradient(45deg,transparent 48%,rgba(0,0,0,0.06) 49%,rgba(0,0,0,0.06) 51%,transparent 52%);background-size:60px 60px}
+.art-geo-02::after{content:'';position:absolute;left:25%;top:25%;width:50%;height:50%;background:linear-gradient(135deg,transparent 48%,rgba(0,0,0,0.04) 49%,rgba(0,0,0,0.04) 51%,transparent 52%);background-size:40px 40px}
+.art-geo-03::before{content:'';position:absolute;left:15%;top:15%;width:70%;height:70%;border:2px solid rgba(0,0,0,0.04);transform:rotate(45deg)}
+.art-geo-03::after{content:'';position:absolute;left:25%;top:25%;width:50%;height:50%;border:2px solid rgba(0,0,0,0.03);transform:rotate(-15deg)}
+.art-geo-04::before{content:'';position:absolute;left:5%;top:5%;width:90%;height:90%;background:repeating-linear-gradient(0deg,transparent,transparent 29px,rgba(0,0,0,0.03) 29px,rgba(0,0,0,0.03) 30px)}
+.art-geo-04::after{content:'';position:absolute;left:5%;top:5%;width:90%;height:90%;background:repeating-linear-gradient(90deg,transparent,transparent 29px,rgba(0,0,0,0.03) 29px,rgba(0,0,0,0.03) 30px)}
+.art-geo-05::before{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;background:rgba(0,0,0,0.04)}
+.art-geo-05::after{content:'';position:absolute;left:0;top:50%;width:100%;height:1px;background:rgba(0,0,0,0.04)}
+.art-geo-06::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 20%,rgba(0,0,0,0.02) 21%,transparent 22%,rgba(0,0,0,0.02) 35%,transparent 36%,rgba(0,0,0,0.02) 50%,transparent 51%)}
+.art-geo-06::after{content:'';position:absolute;left:40%;top:40%;width:20%;height:20%;background:rgba(0,0,0,0.03);border-radius:50%}
+
+/* ORGANIC (6) */
+.art-org-01{background:linear-gradient(135deg,#c0b0a0 0%,#a89880 30%,#908060 60%,#786848 100%);position:relative}
+.art-org-02{background:linear-gradient(160deg,#a0b0a0 0%,#809880 40%,#607860 70%,#485848 100%);position:relative}
+.art-org-03{background:linear-gradient(180deg,#c8a890 0%,#b09878 50%,#988060 100%);position:relative}
+.art-org-04{background:linear-gradient(120deg,#b0a890 0%,#908870 50%,#706850 100%);position:relative}
+.art-org-05{background:linear-gradient(90deg,#a0a898 0%,#808878 50%,#606858 100%);position:relative}
+.art-org-06{background:linear-gradient(45deg,#c0a890 0%,#a08870 50%,#806850 100%);position:relative}
+
+.art-org-01::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(160,130,100,0.3) 0%,transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(140,110,80,0.25) 0%,transparent 45%);animation:drift 12s ease-in-out infinite alternate}
+.art-org-02::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(100,130,100,0.3) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(80,110,80,0.25) 0%,transparent 45%);animation:drift 15s ease-in-out infinite alternate}
+.art-org-03::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(180,150,120,0.2) 0%,transparent 50%);animation:breathe 8s ease-in-out infinite}
+.art-org-04::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 40% 60%,rgba(150,140,110,0.25) 0%,transparent 50%),radial-gradient(ellipse at 60% 40%,rgba(130,120,90,0.2) 0%,transparent 45%);animation:drift 10s ease-in-out infinite alternate}
+.art-org-05::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 75%,rgba(120,130,120,0.2) 0%,transparent 50%),radial-gradient(ellipse at 75% 25%,rgba(100,110,100,0.15) 0%,transparent 45%);animation:drift 14s ease-in-out infinite alternate}
+.art-org-06::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(160,130,100,0.15) 0%,transparent 40%);animation:breathe 10s ease-in-out infinite}
+
+/* MINIMALIST (6) */
+.art-min-01{background:#f0f0f0;position:relative}
+.art-min-02{background:#e8e8e8;position:relative}
+.art-min-03{background:#f5f0eb;position:relative}
+.art-min-04{background:#ebe8e0;position:relative}
+.art-min-05{background:#f0ebe5;position:relative}
+.art-min-06{background:#e5e0da;position:relative}
+
+.art-min-01::before{content:'';position:absolute;left:30%;top:30%;width:40%;height:40%;background:linear-gradient(135deg,rgba(0,0,0,0.02) 0%,rgba(0,0,0,0.05) 100%);border-radius:2px}
+.art-min-02::before{content:'';position:absolute;left:40%;top:20%;width:20%;height:60%;background:linear-gradient(180deg,rgba(0,0,0,0.03) 0%,rgba(0,0,0,0.06) 100%)}
+.art-min-03::before{content:'';position:absolute;left:20%;top:40%;width:60%;height:20%;background:linear-gradient(90deg,rgba(0,0,0,0.02) 0%,rgba(0,0,0,0.05) 50%,rgba(0,0,0,0.02) 100%)}
+.art-min-04::before{content:'';position:absolute;left:10%;top:10%;width:80%;height:80%;border:1px solid rgba(0,0,0,0.04);border-radius:50%}
+.art-min-05::before{content:'';position:absolute;left:25%;top:25%;width:50%;height:50%;background:conic-gradient(from 0deg,rgba(0,0,0,0.02) 0deg,rgba(0,0,0,0.05) 90deg,rgba(0,0,0,0.02) 180deg,rgba(0,0,0,0.05) 270deg,rgba(0,0,0,0.02) 360deg)}
+.art-min-06::before{content:'';position:absolute;left:15%;top:35%;width:70%;height:30%;background:linear-gradient(180deg,rgba(0,0,0,0.03) 0%,rgba(0,0,0,0.06) 50%,rgba(0,0,0,0.03) 100%)}
+
+/* TEXTURAL (6) */
+.art-tex-01{background:linear-gradient(135deg,#b8a898 0%,#a09080 50%,#887868 100%);position:relative}
+.art-tex-02{background:linear-gradient(160deg,#a8a0b0 0%,#908898 50%,#787080 100%);position:relative}
+.art-tex-03{background:linear-gradient(180deg,#c0b8a0 0%,#a8a088 50%,#908870 100%);position:relative}
+.art-tex-04{background:linear-gradient(120deg,#b0a8a0 0%,#988880 50%,#806868 100%);position:relative}
+.art-tex-05{background:linear-gradient(90deg,#a8b0a0 0%,#889880 50%,#687860 100%);position:relative}
+.art-tex-06{background:linear-gradient(45deg,#c0a0a0 0%,#a08080 50%,#806060 100%);position:relative}
+
+.art-tex-01::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+.art-tex-02::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E")}
+.art-tex-03::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E")}
+.art-tex-04::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E")}
+.art-tex-05::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")}
+.art-tex-06::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E")}
+
+/* CONIC STUDIES (12) */
+.art-m1{background:conic-gradient(from 0deg at 30% 30%,#e8d0c0 0deg,#c8a898 72deg,#a08878 144deg,#d0b8a8 216deg,#e8d0c0 288deg,#c8a898 360deg);position:relative}
+.art-m2{background:conic-gradient(from 45deg at 50% 50%,#b0c8d8 0deg,#90a8b8 60deg,#708898 120deg,#90a8b8 180deg,#b0c8d8 240deg,#90a8b8 300deg,#708898 360deg);position:relative}
+.art-m3{background:conic-gradient(from 90deg at 60% 40%,#d0c8b0 0deg,#b0a890 90deg,#908870 180deg,#b0a890 270deg,#d0c8b0 360deg);position:relative}
+.art-m4{background:conic-gradient(from 180deg at 40% 60%,#c8b0c0 0deg,#a890a0 60deg,#887080 120deg,#a890a0 180deg,#c8b0c0 240deg,#a890a0 300deg,#887080 360deg);position:relative}
+.art-m5{background:linear-gradient(135deg,rgba(200,180,160,0.4) 0%,rgba(160,140,120,0.6) 50%,rgba(120,100,80,0.8) 100%),linear-gradient(45deg,rgba(180,160,140,0.3) 0%,rgba(140,120,100,0.5) 100%);position:relative}
+.art-m6{background:linear-gradient(160deg,rgba(160,180,200,0.4) 0%,rgba(120,140,160,0.6) 50%,rgba(80,100,120,0.8) 100%),linear-gradient(120deg,rgba(140,160,180,0.3) 0%,rgba(100,120,140,0.5) 100%);position:relative}
+.art-m7{background:radial-gradient(ellipse at 30% 20%,rgba(200,180,160,0.5) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(160,140,120,0.4) 0%,transparent 50%),linear-gradient(135deg,#c8b0a0 0%,#a89880 100%);position:relative}
+.art-m8{background:radial-gradient(ellipse at 20% 70%,rgba(180,160,200,0.4) 0%,transparent 50%),radial-gradient(ellipse at 80% 30%,rgba(140,120,160,0.5) 0%,transparent 50%),linear-gradient(160deg,#b0a8c0 0%,#9088a0 100%);position:relative}
+.art-m9{background:radial-gradient(circle at 50% 50%,rgba(200,200,180,0.3) 0%,transparent 40%),radial-gradient(circle at 25% 75%,rgba(180,180,160,0.4) 0%,transparent 35%),linear-gradient(90deg,#d0d0b8 0%,#b0b098 100%);position:relative}
+.art-m10{background:radial-gradient(ellipse at 60% 40%,rgba(200,180,200,0.4) 0%,transparent 45%),radial-gradient(ellipse at 30% 70%,rgba(180,160,180,0.3) 0%,transparent 40%),linear-gradient(45deg,#c8b0c8 0%,#a890a0 100%);position:relative}
+.art-m11{background:repeating-linear-gradient(0deg,transparent,transparent 40px,rgba(255,255,255,0.05) 40px,rgba(255,255,255,0.05) 41px),repeating-linear-gradient(90deg,transparent,transparent 40px,rgba(255,255,255,0.05) 40px,rgba(255,255,255,0.05) 41px),linear-gradient(135deg,#a89888 0%,#887868 100%);position:relative}
+.art-m12{background:repeating-linear-gradient(45deg,transparent,transparent 30px,rgba(255,255,255,0.06) 30px,rgba(255,255,255,0.06) 31px),repeating-linear-gradient(135deg,transparent,transparent 30px,rgba(0,0,0,0.03) 30px,rgba(0,0,0,0.03) 31px),linear-gradient(180deg,#b0a898 0%,#908878 100%);position:relative}
+
+/* ADDITIONAL MASSIVE WORKS (6) */
+.art-x1{background:linear-gradient(135deg,#c0a890 0%,#a08878 25%,#907868 50%,#806058 75%,#705048 100%);position:relative;overflow:hidden}
+.art-x2{background:linear-gradient(160deg,#90a8b8 0%,#7890a0 25%,#607888 50%,#486070 75%,#304858 100%);position:relative;overflow:hidden}
+.art-x3{background:linear-gradient(180deg,#d0c8b0 0%,#b8b098 25%,#a09880 50%,#888068 75%,#706850 100%);position:relative;overflow:hidden}
+.art-x4{background:linear-gradient(120deg,#b8a8b8 0%,#a090a0 25%,#887888 50%,#706070 75%,#584858 100%);position:relative;overflow:hidden}
+.art-x5{background:linear-gradient(90deg,#a8b0a0 0%,#909880 25%,#788060 50%,#606840 75%,#485030 100%);position:relative;overflow:hidden}
+.art-x6{background:linear-gradient(45deg,#c0a0a0 0%,#a88888 25%,#907070 50%,#785858 75%,#604040 100%);position:relative;overflow:hidden}
+
+.art-x1::before,.art-x2::before,.art-x3::before,.art-x4::before,.art-x5::before,.art-x6::before{
+  content:'';position:absolute;left:-10%;top:-10%;width:120%;height:120%;background:radial-gradient(ellipse at 50% 50%,rgba(255,255,255,0.08) 0%,transparent 60%);filter:blur(60px);animation:drift 14s ease-in-out infinite alternate}
+
+/* KEYFRAMES */
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(3%,-2%)}}
+@keyframes breathe{0%,100%{opacity:0.6;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK PALETTE & ATMOSPHERE OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
+:root{
+  --accent-amber:#d4a018;
+  --accent-red:#c0392b;
+  --institution-border:#333333;
+}
+html{background:#111111}
+body{background:#111111;color:#c4b8a5}
+::selection{background:rgba(212,160,24,0.25);color:#111}
+::-webkit-scrollbar-thumb{background:rgba(196,184,165,0.2)}
+#global-nav{background:rgba(17,17,17,0.88)!important;border-bottom-color:rgba(196,184,165,0.08)}
+#global-nav a{color:#c4b8a5}
+#global-nav a:hover{opacity:1;color:#d4a018}
+#global-nav .nav-brand{color:#7a6f5e}
+#museum-plaque{background:rgba(17,17,17,0.95);border-color:rgba(196,184,165,0.12);color:#7a6f5e}
+#museum-plaque .plaque-title{color:#c4b8a5}
+#keyboard-hint{color:#7a6f5e}
+#keyboard-hint kbd{border-color:rgba(196,184,165,0.25);color:#c4b8a5}
+.scroll-indicator{color:#7a6f5e}
+.block-reveal::after{background:#111111}
+.home-enter-hint{color:#d4a018;opacity:0;transition:opacity .6s}
+#home-artwork:hover .home-enter-hint{opacity:.8}
+.home-progress .dot{background:#c4b8a5}
+.evidence-nav-arrows button{color:#c4b8a5;border-color:rgba(196,184,165,0.2)}
+.evidence-nav-arrows button:hover{border-color:#d4a018;color:#d4a018}
+.quiz-option{color:#c4b8a5;border-color:rgba(196,184,165,0.25)}
+.quiz-option:hover{border-color:#d4a018;background:rgba(212,160,24,0.05)}
+.quiz-result{border-color:rgba(196,184,165,0.15)}
+.constellation-info-panel{background:#1a1a1a;border-left-color:#c4b8a5}
+.process-file-content{background:#1a1a1a;border-left-color:rgba(196,184,165,0.25)}
+.artist-directory-item:hover{padding-left:20px;color:#d4a018}
+
+/* CRT scanline overlay */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9997;
+  background:
+    linear-gradient(rgba(17,17,17,0) 50%, rgba(0,0,0,0.25) 50%),
+    linear-gradient(90deg, rgba(212,160,24,0.02), rgba(192,57,43,0.02));
+  background-size:100% 4px, 6px 100%;
+  opacity:0.12;
+}
+
+/* Realm atmospheres — dark variants */
+.realm-melcher{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'IBM Plex Mono',monospace;--realm-accent:#c0392b}
+.realm-elena{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'Cormorant Garamond',serif;--realm-accent:#7d8a6b}
+.realm-kaito{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'Noto Serif JP',serif;--realm-accent:#8a8a8a}
+.realm-sara{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'Space Grotesk',sans-serif;--realm-accent:#c0392b}
+.realm-marcus{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'Inter',sans-serif;--realm-accent:#7a6f5e}
+.realm-yuki{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'Space Grotesk',sans-serif;--realm-accent:#9b59b6}
+.realm-amara{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'Playfair Display',serif;--realm-accent:#d4a018}
+.realm-viktor{--realm-bg:#111111;--realm-text:#c4b8a5;--realm-secondary:'Space Grotesk',sans-serif;--realm-accent:#2980b9}
+
+</style>
+</head>
+<body>
+
+<div id="transition-overlay"></div>
+<canvas id="particles-canvas"></canvas>
+
+<nav id="global-nav">
+  <div class="nav-left">
+    <a href="#" data-nav="archive">ARCHIVE</a>
+    <a href="#" data-nav="collections">COLLECTIONS</a>
+    <a href="#" data-nav="process">PROCESS</a>
+  </div>
+  <div class="nav-brand">DREAMSWAP</div>
+  <div class="nav-right">
+    <a href="#" data-nav="artists">ARTISTS</a>
+    <a href="#" data-nav="about">ABOUT</a>
+  </div>
+</nav>
+
+<div id="museum-plaque">
+  <div class="plaque-title" id="plaque-title"></div>
+  <div id="plaque-archive"></div>
+  <div id="plaque-year"></div>
+</div>
+
+<div id="keyboard-hint">
+  <kbd>ESC</kbd> BACK &nbsp; <kbd>←</kbd> <kbd>→</kbd> NAVIGATE
+</div>
+
+<div id="app">
+
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div id="home-artwork">
+      <div class="block-reveal revealed">
+        <div class="art-surface" id="home-surface"></div>
+      </div>
+      <div class="home-enter-hint">→ ENTER THE ARCHIVE</div>
+    </div>
+    <div class="home-meta">
+      <h1 id="home-title">THE MACHINE REMEMBERS</h1>
+      <div class="separator"></div>
+      <p id="home-subtitle">Stories, systems, machines,<br>and forgotten worlds.</p>
+      <div class="home-featured-info" id="home-featured-info"></div>
+      <div class="home-progress" id="home-progress"></div>
+    </div>
+  </section>
+
+  <!-- ARCHIVE -->
+  <section class="view" id="view-archive">
+    <div class="archive-section-label">ALL WORKS <span>— — pieces across 8 artists</span></div>
+    <div id="archive-grid"></div>
+  </section>
+
+  <!-- EVIDENCE -->
+  <section class="view" id="view-evidence">
+    <div class="evidence-back" id="evidence-back"><span>←</span> BACK <span class="evidence-nav-arrows"><button id="ev-prev">←</button><button id="ev-next">→</button></span></div>
+    <div class="evidence-hero" id="evidence-hero"></div>
+    <div class="evidence-title-block">
+      <div class="separator"></div>
+      <h2 id="evidence-title"></h2>
+      <p id="evidence-desc"></p>
+      <div class="evidence-meta" id="evidence-meta"></div>
+      <div class="separator"></div>
+    </div>
+    <div class="evidence-details" id="evidence-details"></div>
+  </section>
+
+  <!-- ARTISTS -->
+  <section class="view" id="view-artists">
+    <h2>ARTISTS</h2>
+    <div id="artists-list"></div>
+  </section>
+
+  <!-- COLLECTIONS -->
+  <section class="view" id="view-collections">
+    <h2>CURATED COLLECTIONS</h2>
+    <div class="collections-grid" id="collections-grid"></div>
+  </section>
+
+  <!-- REALM -->
+  <section class="view" id="view-realm">
+    <div class="realm-header">
+      <h2 id="realm-name"></h2>
+      <div class="realm-theme" id="realm-theme"></div>
+      <div class="realm-statement" id="realm-statement"></div>
+      <div class="realm-actions">
+        <a href="#" id="realm-know-link">KNOW THE ARTIST →</a>
+        <a href="#" id="realm-archive-link">ENTER STUDIO →</a>
+      </div>
+    </div>
+    <div class="realm-wall" id="realm-wall"></div>
+  </section>
+
+  <!-- KNOW -->
+  <section class="view" id="view-know">
+    <div class="know-header">
+      <h2>KNOW THE ARTIST</h2>
+      <div class="know-sub" id="know-subtitle">What shaped this world?</div>
+    </div>
+    <div class="know-nav">
+      <button class="active" data-chapter="0">Influences</button>
+      <button data-chapter="1">Evolution</button>
+      <button data-chapter="2">DNA</button>
+      <button data-chapter="3">Studio Mind</button>
+      <button data-chapter="4">Genealogy</button>
+    </div>
+    <div id="know-chapters"></div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="view" id="view-process">
+    <h2>ARCHIVE NOTES</h2>
+    <div id="process-files"></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="view" id="view-about">
+    <div class="archive-record">
+      <h2>ARCHIVE RECORD</h2>
+        <div class="record-body">
+          DREAMSWAP<br><br>
+          An ongoing attempt to document<br>
+          imaginary systems, forgotten<br>
+          machines, impossible economies,<br>
+          and synthetic civilizations.
+        </div>
+      <div class="record-footer">
+        DREAMSWAP<br>
+        EST. 2026<br><br>
+        ALL MEMORY DECAYS
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="global-footer">
+  <div>DREAMSWAP</div>
+  <div class="footer-divider"></div>
+  <div>EST. 2026</div>
+  <div class="footer-context" id="footer-context">— home —</div>
+  <div class="footer-motto">ALL MEMORY DECAYS</div>
+</footer>
+
+<script>
+const ARCHIVE = {"artists": [{"id": "melcher", "name": "MELCHER", "theme": "Brutalist Machines", "realmClass": "realm-melcher", "statement": "An ongoing excavation of industrial decay and synthetic architecture. The machine outlives its operator. The structure outlives its purpose. What remains is archaeology.", "influences": [{"name": "Moebius", "category": "Visual DNA", "connection": "Linear architecture of the infinite \u2014 corridors that extend beyond the frame", "x": 0.2, "y": 0.3}, {"name": "Soviet Brutalism", "category": "Visual DNA", "connection": "Monolithic scale and material honesty \u2014 concrete as political statement", "x": 0.8, "y": 0.2}, {"name": "Tarkovsky", "category": "Intellectual Framework", "connection": "Time as a physical material that accumulates on surfaces", "x": 0.5, "y": 0.8}, {"name": "Desert Ecosystems", "category": "Material Memory", "connection": "Survival through adaptation \u2014 form follows scarcity", "x": 0.3, "y": 0.6}, {"name": "Lebbeus Woods", "category": "Visual DNA", "connection": "Architecture of resistance \u2014 structures that fight their context", "x": 0.7, "y": 0.5}, {"name": "Concrete Poetry", "category": "Intellectual Framework", "connection": "Form as meaning \u2014 the container is the content", "x": 0.4, "y": 0.4}], "evolution": [{"year": "2012", "title": "Sketchbooks", "desc": "Early architectural studies. Graphite on newsprint. Obsessed with section drawings and the weight of imagined materials. The first machines were buildings that happened to move."}, {"year": "2015", "title": "Architecture Obsession", "desc": "Documenting abandoned structures across Eastern Europe. Photography as evidence. The first encounters with scale beyond human measure."}, {"year": "2019", "title": "Industrial Decay", "desc": "First machine civilizations. Collage and digital composite. The question emerged: what survives when the builders vanish?"}, {"year": "2022", "title": "Synthetic Societies", "desc": "Systems thinking applied to imaginary cultures. Blueprints for cities that never existed. Each drawing implies ten thousand others."}, {"year": "2026", "title": "Machine Civilizations", "desc": "Fully realized synthetic civilizations with internal logic, economy, and ritual. The archive is no longer fiction. It is premonition."}], "dna": {"Architecture": 90, "Nature": 30, "History": 70, "Machines": 95, "Politics": 15, "Fantasy": 40, "Decay": 85, "Perfection": 20}, "quiz": [{"question": "What attracts you more?", "options": [{"text": "Perfection", "val": "perfection"}, {"text": "Decay", "val": "decay"}], "answer": "decay"}, {"question": "What interests you most?", "options": [{"text": "Cities", "val": "cities"}, {"text": "People", "val": "people"}, {"text": "Machines", "val": "machines"}], "answer": "machines"}, {"question": "How do you approach a blank surface?", "options": [{"text": "Fill it completely", "val": "fill"}, {"text": "Leave it mostly empty", "val": "empty"}], "answer": "empty"}, {"question": "What is more beautiful?", "options": [{"text": "The plan", "val": "plan"}, {"text": "The accident", "val": "accident"}], "answer": "accident"}, {"question": "Your preferred material?", "options": [{"text": "Steel", "val": "steel"}, {"text": "Water", "val": "water"}, {"text": "Paper", "val": "paper"}], "answer": "steel"}], "artworks": [{"id": "wanderer-07", "title": "Wanderer Unit 07", "archiveNum": "ARCHIVE 002", "year": "2026", "desc": "A mobile settlement designed to survive the collapse of known civilization. Self-contained. Self-repairing. Capable of traversing terrain no human cartographer has mapped. The treads leave marks that will outlast the roads they replace.", "medium": "Digital composite / Mixed media", "dimensions": "3840 x 2160", "style": "art-cf-01", "category": "Machines, Structures", "status": "Recovered", "theme": "Brutalist Machines", "details": [{"type": "fragment", "caption": "Mobility Study \u2014 Recovered technical drawing showing the articulation system. The joint mechanism uses a tension cable system derived from suspension bridge engineering."}, {"type": "fragment", "caption": "Recovered Drawing \u2014 Preliminary sketch found in the archive. Pencil on water-damaged paper. The scale is ambiguous."}, {"type": "blueprint", "caption": "Structural Analysis \u2014 Load-bearing calculations for the habitat module. The design intentionally over-specifies structural integrity by 400%."}]}, {"id": "relay-12", "title": "Relay Station 12", "archiveNum": "ARCHIVE 007", "year": "2025", "desc": "Communication outpost buried beneath permafrost. The last node in a network that no longer has a center. It transmits into silence. The silence is the message.", "medium": "Digital", "dimensions": "2400 x 3200", "style": "art-cf-02", "category": "Structures, Communication", "status": "Recovered", "theme": "Brutalist Machines", "details": [{"type": "fragment", "caption": "Section drawing \u2014 thermal layers and signal penetration through 12 meters of permafrost."}, {"type": "annotation", "caption": "Antenna array \u2014 designed for frequencies no longer in use. Transmission continues."}]}, {"id": "forge-09", "title": "Forge Complex 09", "archiveNum": "ARCHIVE 012", "year": "2024", "desc": "Manufacturing facility that produces nothing. The machines run because they do not know how to stop. The conveyor belts carry air. The furnaces burn memory.", "medium": "Digital composite", "dimensions": "3200 x 2400", "style": "art-cf-03", "category": "Machines, Industry", "status": "Recovered", "theme": "Brutalist Machines", "details": [{"type": "annotation", "caption": "Production line \u2014 last known output was a single bolt, dated 2019. The line still runs."}]}, {"id": "habitat-04", "title": "Habitat Ring 04", "archiveNum": "ARCHIVE 018", "year": "2026", "desc": "Orbital dwelling for a population that never arrived. The hydroponics still cycle. The lights still turn on at dusk. A home built for ghosts that have not yet died.", "medium": "Digital", "dimensions": "3840 x 2160", "style": "art-cf-04", "category": "Structures, Habitat", "status": "Recovered", "theme": "Brutalist Machines", "details": [{"type": "blueprint", "caption": "Life support schematic \u2014 redundant systems designed for a crew that never boarded."}]}, {"id": "wanderer-03", "title": "Wanderer Unit 03", "archiveNum": "ARCHIVE 003", "year": "2025", "desc": "An earlier iteration of the Wanderer series. Smaller, more fragile. The treads are narrower. The habitat module is a single room. It was designed for one person and their memories.", "medium": "Digital composite", "dimensions": "3200 x 2400", "style": "art-m3", "category": "Machines, Mobility", "status": "Recovered", "theme": "Brutalist Machines", "details": [{"type": "blueprint", "caption": "Preliminary mobility study \u2014 continuous track with passive suspension."}]}, {"id": "sentinel-06", "title": "Sentinel Head 06", "archiveNum": "ARCHIVE 015", "year": "2025", "desc": "A surveillance installation that watches nothing. The cameras cycle through empty frequencies. The lenses are trained on landscapes that no longer exist. It is the last witness to a world that forgot to end.", "medium": "Digital composite", "dimensions": "2400 x 3200", "style": "art-m4", "category": "Structures, Surveillance", "status": "Recovered", "theme": "Brutalist Machines", "details": [{"type": "annotation", "caption": "Camera array \u2014 360-degree coverage of a perimeter that has no inside."}]}, {"id": "forge-05", "title": "Forge Complex 05", "archiveNum": "ARCHIVE 010", "year": "2023", "desc": "The forge before it became Complex 09. Still producing something. The glow of the furnace is warm. The workers are visible through the windows. This is the machine before it forgot its purpose.", "medium": "Digital composite", "dimensions": "2800 x 2100", "style": "art-m5", "category": "Machines, Industry", "status": "Recovered", "theme": "Brutalist Machines", "details": [{"type": "fragment", "caption": "Production log \u2014 output: 12,000 bolts per day. The last entry is a drawing of a bird."}]}]}, {"id": "elena-voss", "name": "ELENA VOSS", "theme": "Watercolor Forests", "realmClass": "realm-elena", "statement": "Documenting the intelligence of root systems and the memory of old growth. A forest is not a place. It is a conversation that has been ongoing for ten thousand years.", "influences": [{"name": "Hayao Miyazaki", "category": "Visual DNA", "connection": "Spirits inhabiting landscape \u2014 the animate forest", "x": 0.3, "y": 0.3}, {"name": "Botanical Illustration", "category": "Material Memory", "connection": "Scientific accuracy as devotion \u2014 every vein is a prayer", "x": 0.7, "y": 0.2}, {"name": "Celtic Mythology", "category": "Intellectual Framework", "connection": "Trees as witnesses \u2014 the oak remembers everything", "x": 0.5, "y": 0.7}, {"name": "Wetlands", "category": "Material Memory", "connection": "Edge ecosystems \u2014 where water hesitates between land and sky", "x": 0.2, "y": 0.6}, {"name": "Suzanne Simard", "category": "Intellectual Framework", "connection": "Mycelial networks as social structure \u2014 the wood wide web", "x": 0.8, "y": 0.5}], "evolution": [{"year": "2014", "title": "Field Journals", "desc": "Plein air watercolor in the Pacific Northwest. The first attempts to capture light through canopy. Realized that green is not a color but a spectrum of infinite variation."}, {"year": "2017", "title": "Root Studies", "desc": "Microscopic attention to root systems. The realization that what is underground mirrors what is above. The tree is only half visible."}, {"year": "2020", "title": "Forest Portraits", "desc": "Treating individual trees as subjects with biography. Each trunk has a face if you look long enough."}, {"year": "2023", "title": "Symbiotic Networks", "desc": "Mycelial networks visualized as social structures. The forest as a civilization. Fungus as infrastructure."}, {"year": "2026", "title": "The Living Archive", "desc": "Entire ecosystems rendered as memory palaces. The forest remembers. The watercolor is merely the evidence."}], "dna": {"Architecture": 10, "Nature": 98, "History": 50, "Machines": 5, "Politics": 20, "Fantasy": 75, "Decay": 60, "Perfection": 40}, "quiz": [{"question": "What attracts you more?", "options": [{"text": "Order", "val": "order"}, {"text": "Chaos", "val": "chaos"}], "answer": "chaos"}, {"question": "Where do you find truth?", "options": [{"text": "Above ground", "val": "above"}, {"text": "Below ground", "val": "below"}], "answer": "below"}, {"question": "Your preferred light?", "options": [{"text": "Direct sun", "val": "sun"}, {"text": "Dappled shade", "val": "shade"}], "answer": "shade"}, {"question": "A tree is?", "options": [{"text": "An individual", "val": "individual"}, {"text": "A node", "val": "node"}], "answer": "node"}, {"question": "Water is?", "options": [{"text": "A medium", "val": "medium"}, {"text": "A subject", "val": "subject"}], "answer": "subject"}], "artworks": [{"id": "mycelial-04", "title": "Mycelial Network 04", "archiveNum": "ARCHIVE 103", "year": "2026", "desc": "A visualization of the communication network beneath an old-growth forest. Each node is a tree. Each line is a fungal thread carrying chemical memory. The network is older than human language.", "medium": "Watercolor on Arches cold press", "dimensions": "560 x 760 mm", "style": "art-cf-05", "category": "Nature, Network", "status": "Recovered", "theme": "Watercolor Forests", "details": [{"type": "annotation", "caption": "Root tip colonization \u2014 showing hyphal connection at 400x magnification."}, {"type": "annotation", "caption": "Color key \u2014 green = sugar transfer, amber = distress signal, red = pathogen alert."}]}, {"id": "canopy-01", "title": "Canopy Light 01", "archiveNum": "ARCHIVE 098", "year": "2025", "desc": "The moment light passes through leaves and becomes something else. Not illumination. Information. The canopy is a filter that translates sunlight into chemistry.", "medium": "Watercolor", "dimensions": "380 x 560 mm", "style": "art-cf-06", "category": "Nature, Light", "status": "Recovered", "theme": "Watercolor Forests", "details": [{"type": "annotation", "caption": "Chlorophyll absorption spectrum \u2014 rendered as translucent wash layers."}]}, {"id": "witness-07", "title": "Witness Oak 07", "archiveNum": "ARCHIVE 112", "year": "2026", "desc": "A portrait of a 400-year-old oak. The rings are not counted. They are read. Each compression is a drought. Each widening is a peace.", "medium": "Watercolor and graphite", "dimensions": "480 x 680 mm", "style": "art-org-01", "category": "Nature, Portrait", "status": "Recovered", "theme": "Watercolor Forests", "details": [{"type": "blueprint", "caption": "Ring analysis \u2014 1642: fire, 1815: volcanic winter, 2020: silence."}]}, {"id": "root-03", "title": "Root Memory 03", "archiveNum": "ARCHIVE 115", "year": "2025", "desc": "The root system of a tree that fell in 1987. The drawing was made from the cavity left in the soil. The negative space is the subject.", "medium": "Watercolor and ink", "dimensions": "420 x 600 mm", "style": "art-org-02", "category": "Nature, Memory", "status": "Recovered", "theme": "Watercolor Forests", "details": [{"type": "blueprint", "caption": "Soil sample analysis \u2014 clay composition indicates 12,000 years of continuous forest cover."}]}, {"id": "forest-08", "title": "Forest Memory 08", "archiveNum": "ARCHIVE 108", "year": "2025", "desc": "A forest that has been clear-cut and regrown three times. The watercolor captures all three forests simultaneously. The layers are transparent. The ghosts are visible.", "medium": "Watercolor and graphite", "dimensions": "520 x 720 mm", "style": "art-m6", "category": "Nature, Memory", "status": "Recovered", "theme": "Watercolor Forests", "details": [{"type": "blueprint", "caption": "Layer analysis \u2014 3 distinct washes, each representing a different forest generation."}]}]}, {"id": "kaito-tanaka", "name": "KAITO TANAKA", "theme": "Japanese Ink", "realmClass": "realm-kaito", "statement": "The space between the brushstroke and the breath. What is not painted is more important than what is. The empty scroll contains the mountain.", "influences": [{"name": "Sesshu Toyo", "category": "Visual DNA", "connection": "Emptiness as composition \u2014 the void is the subject", "x": 0.4, "y": 0.3}, {"name": "Mono no Aware", "category": "Intellectual Framework", "connection": "Pathos of things \u2014 the sadness of impermanence", "x": 0.6, "y": 0.6}, {"name": "Tadao Ando", "category": "Visual DNA", "connection": "Concrete and the void \u2014 architecture as negative space", "x": 0.2, "y": 0.7}, {"name": "Seasonal Change", "category": "Material Memory", "connection": "The 72 micro-seasons \u2014 time divided into visible increments", "x": 0.8, "y": 0.4}, {"name": "Zen Calligraphy", "category": "Material Memory", "connection": "The body learns to forget intention \u2014 the brush moves before the mind decides", "x": 0.5, "y": 0.2}], "evolution": [{"year": "2010", "title": "Calligraphy", "desc": "Ten years of daily practice. The body learning to forget intention. The brush moves. The mind watches."}, {"year": "2016", "title": "Landscape Reduction", "desc": "Removing elements until only essence remained. A mountain became a single stroke. A river became a hesitation."}, {"year": "2021", "title": "Architectural Ink", "desc": "Combining ink wash with architectural drawing. The building is a brushstroke that forgot to stop."}, {"year": "2026", "title": "The Void Series", "desc": "Empty scrolls that contain entire mountains. The viewer completes the work. The mind is the canvas."}], "dna": {"Architecture": 80, "Nature": 85, "History": 90, "Machines": 10, "Politics": 5, "Fantasy": 30, "Decay": 70, "Perfection": 60}, "quiz": [{"question": "What is more powerful?", "options": [{"text": "The stroke", "val": "stroke"}, {"text": "The space", "val": "space"}], "answer": "space"}, {"question": "Your ideal surface?", "options": [{"text": "Rough", "val": "rough"}, {"text": "Smooth", "val": "smooth"}], "answer": "rough"}, {"question": "Time feels like?", "options": [{"text": "A circle", "val": "circle"}, {"text": "A line", "val": "line"}], "answer": "circle"}, {"question": "A mountain is?", "options": [{"text": "Solid", "val": "solid"}, {"text": "Breath", "val": "breath"}], "answer": "breath"}, {"question": "The brush moves?", "options": [{"text": "Before thought", "val": "before"}, {"text": "After thought", "val": "after"}], "answer": "before"}], "artworks": [{"id": "void-03", "title": "Mountain Void 03", "archiveNum": "ARCHIVE 201", "year": "2026", "desc": "An empty mountain. The snow has fallen. The viewer must remember the peak. The ink is only the suggestion of what was never there.", "medium": "Ink on rice paper", "dimensions": "680 x 1340 mm", "style": "art-org-03", "category": "Ink, Landscape", "status": "Recovered", "theme": "Japanese Ink", "details": [{"type": "annotation", "caption": "The single vertical stroke \u2014 implies the mountain. One breath. One line."}, {"type": "annotation", "caption": "Paper texture \u2014 rough mulberry. The ink bleeds into memory at 0.02ml per second."}]}, {"id": "rain-05", "title": "Rain Garden 05", "archiveNum": "ARCHIVE 205", "year": "2025", "desc": "A garden after rain. The stones are darker. The moss is louder. The puddles hold pieces of sky that the sky has forgotten.", "medium": "Ink and light wash", "dimensions": "340 x 560 mm", "style": "art-org-04", "category": "Ink, Garden", "status": "Recovered", "theme": "Japanese Ink", "details": [{"type": "annotation", "caption": "A water droplet \u2014 rendered as the absence of ink. The paper becomes the water."}]}, {"id": "gate-02", "title": "Gate of Absence 02", "archiveNum": "ARCHIVE 208", "year": "2026", "desc": "A torii gate that leads nowhere. The path ends at the threshold. The threshold is the destination. The ink is the gate. The paper is the absence beyond it.", "medium": "Ink on handmade paper", "dimensions": "480 x 720 mm", "style": "art-org-05", "category": "Ink, Architecture", "status": "Recovered", "theme": "Japanese Ink", "details": [{"type": "annotation", "caption": "The gate is drawn with a single breath. The breath outlasts the gate."}]}, {"id": "scroll-01", "title": "Empty Scroll 01", "archiveNum": "ARCHIVE 210", "year": "2026", "desc": "A scroll with one brushstroke. The stroke is the mountain. The rest is the mountain you must imagine. The silk remembers the breath that made it.", "medium": "Ink on silk", "dimensions": "340 x 1200 mm", "style": "art-org-06", "category": "Ink, Minimal", "status": "Recovered", "theme": "Japanese Ink", "details": [{"type": "annotation", "caption": "Documented brush pressure \u2014 across 1,000 strokes. The optimal ink load is 0.3ml for a line of 340mm."}]}, {"id": "ink-04", "title": "Ink River 04", "archiveNum": "ARCHIVE 215", "year": "2025", "desc": "A river drawn with a single continuous stroke. The stroke begins in the mountains and ends in the sea. The distance between the two is the length of the brush. The brush is the river.", "medium": "Ink on silk", "dimensions": "400 x 800 mm", "style": "art-m7", "category": "Ink, Landscape", "status": "Recovered", "theme": "Japanese Ink", "details": [{"type": "annotation", "caption": "The stroke was made in a single breath \u2014 14 seconds of continuous contact with the silk."}]}]}, {"id": "sara-chen", "name": "SARA CHEN", "theme": "Abstract Expressionism", "realmClass": "realm-sara", "statement": "The canvas is not a surface. It is an event. Paint is not applied. It is detonated. The viewer arrives after the explosion and reads the debris.", "influences": [{"name": "Willem de Kooning", "category": "Visual DNA", "connection": "The figure as battlefield \u2014 flesh and paint indistinguishable", "x": 0.3, "y": 0.2}, {"name": "Cecily Brown", "category": "Visual DNA", "connection": "Chaos as eroticism \u2014 the body dissolving into gesture", "x": 0.7, "y": 0.3}, {"name": "Francis Bacon", "category": "Intellectual Framework", "connection": "The scream made visible \u2014 interior pressure externalized", "x": 0.5, "y": 0.7}, {"name": "Urban Decay", "category": "Material Memory", "connection": "Graffiti as unconscious \u2014 the city painting itself", "x": 0.2, "y": 0.6}, {"name": "Action Painting", "category": "Intellectual Framework", "connection": "The body as brush \u2014 scale as physical demand", "x": 0.8, "y": 0.5}], "evolution": [{"year": "2013", "title": "Figure Studies", "desc": "Academic training in oil. The body as geometry. Realized that accuracy was a prison."}, {"year": "2017", "title": "First Abstractions", "desc": "The figure abandoned. Paint for paint's sake. The canvas as arena."}, {"year": "2020", "title": "Large Scale", "desc": "Canvases that required ladders. The body became the brush. The whole arm. The shoulder."}, {"year": "2024", "title": "Controlled Chaos", "desc": "Learning to direct the accident. The drip became a vocabulary. The smear became syntax."}, {"year": "2026", "title": "The Event", "desc": "Paintings that document their own making. The process is the subject. The result is evidence."}], "dna": {"Architecture": 20, "Nature": 35, "History": 50, "Machines": 15, "Politics": 60, "Fantasy": 30, "Decay": 80, "Perfection": 10}, "quiz": [{"question": "What is more honest?", "options": [{"text": "Control", "val": "control"}, {"text": "Accident", "val": "accident"}], "answer": "accident"}, {"question": "The canvas is?", "options": [{"text": "A window", "val": "window"}, {"text": "A wall", "val": "wall"}], "answer": "wall"}, {"question": "Color is?", "options": [{"text": "Description", "val": "description"}, {"text": "Emotion", "val": "emotion"}], "answer": "emotion"}, {"question": "Scale should?", "options": [{"text": "Fit the room", "val": "fit"}, {"text": "Overwhelm the room", "val": "overwhelm"}], "answer": "overwhelm"}, {"question": "Finish when?", "options": [{"text": "It looks right", "val": "right"}, {"text": "It feels dangerous", "val": "dangerous"}], "answer": "dangerous"}], "artworks": [{"id": "event-09", "title": "Event 09", "archiveNum": "ARCHIVE 301", "year": "2026", "desc": "A canvas that records the moment paint stopped being a decision and became a reflex. Red does not describe anger. Red is anger.", "medium": "Oil and acrylic on canvas", "dimensions": "2400 x 1800 mm", "style": "art-geo-01", "category": "Painting, Abstract", "status": "Recovered", "theme": "Abstract Expressionism", "details": [{"type": "annotation", "caption": "Impasto layer \u2014 showing 47 distinct applications of cadmium red."}, {"type": "annotation", "caption": "Process note \u2014 canvas was rotated every 20 minutes to capture gravity as collaborator."}]}, {"id": "scream-12", "title": "Scream 12", "archiveNum": "ARCHIVE 308", "year": "2025", "desc": "Not the scream of a person. The scream of a color. Cadmium red that has been pushed beyond its tolerance. The canvas holds the sound.", "medium": "Acrylic on linen", "dimensions": "1800 x 1200 mm", "style": "art-geo-02", "category": "Painting, Abstract", "status": "Recovered", "theme": "Abstract Expressionism", "details": [{"type": "annotation", "caption": "The moment cadmium red becomes black \u2014 through sheer density of application."}]}, {"id": "gravity-04", "title": "Gravity 04", "archiveNum": "ARCHIVE 315", "year": "2026", "desc": "Paint allowed to fall. Gravity as collaborator. The drips form a map of time. The vertical is history. The horizontal is now.", "medium": "Mixed media", "dimensions": "2000 x 1500 mm", "style": "art-geo-03", "category": "Painting, Abstract", "status": "Recovered", "theme": "Abstract Expressionism", "details": [{"type": "annotation", "caption": "Canvas was hung vertically \u2014 for 72 hours during application. Every drip is a timestamp."}]}, {"id": "field-06", "title": "Field 06", "archiveNum": "ARCHIVE 320", "year": "2025", "desc": "A field of color that has no center. The viewer is the center. The painting moves around you. You are the still point in a turning world.", "medium": "Oil on canvas", "dimensions": "3000 x 2000 mm", "style": "art-geo-04", "category": "Painting, Abstract", "status": "Recovered", "theme": "Abstract Expressionism", "details": [{"type": "blueprint", "caption": "Color field analysis \u2014 23 distinct pigments, none mixed. Each color exists in its own territory."}]}, {"id": "red-07", "title": "Red Field 07", "archiveNum": "ARCHIVE 325", "year": "2025", "desc": "A field of red that has no object. The red is not describing anything. It is simply present. The canvas is 2.5 meters wide. The red fills it completely. There is no escape.", "medium": "Oil on canvas", "dimensions": "2500 x 2000 mm", "style": "art-m8", "category": "Painting, Abstract", "status": "Recovered", "theme": "Abstract Expressionism", "details": [{"type": "blueprint", "caption": "Pigment analysis \u2014 pure cadmium red, no medium, no thinner. The paint is almost dust."}]}]}, {"id": "marcus-reed", "name": "MARCUS REED", "theme": "Documentary Photography", "realmClass": "realm-marcus", "statement": "The camera does not capture reality. It captures the moment reality hesitates. Every photograph is a question that the subject did not know was being asked.", "influences": [{"name": "Sebastiao Salgado", "category": "Visual DNA", "connection": "The epic documentary \u2014 scale as moral weight", "x": 0.3, "y": 0.3}, {"name": "Daido Moriyama", "category": "Visual DNA", "connection": "Grain as emotion \u2014 the photograph as memory fragment", "x": 0.7, "y": 0.2}, {"name": "Walker Evans", "category": "Intellectual Framework", "connection": "The ordinary as revelation \u2014 poverty as aesthetic truth", "x": 0.5, "y": 0.7}, {"name": "Subway Systems", "category": "Material Memory", "connection": "Underground as unconscious \u2014 the city's hidden circulation", "x": 0.2, "y": 0.5}, {"name": "Robert Frank", "category": "Intellectual Framework", "connection": "The American as outsider \u2014 documentary as poetry", "x": 0.8, "y": 0.6}], "evolution": [{"year": "2011", "title": "Street Beginnings", "desc": "First camera. A used Leica M6. Walking the city for twelve hours a day. Learning that the best photographs happen when you stop looking."}, {"year": "2015", "title": "Industrial Documentation", "desc": "Factories closing across the Midwest. The last shifts. Workers who had done one thing for thirty years."}, {"year": "2019", "title": "Underground Cities", "desc": "Subway systems as social architecture. The platform as democratic space. Everyone equal in the fluorescent light."}, {"year": "2023", "title": "The Last Residents", "desc": "Documenting the final inhabitants of buildings scheduled for demolition. The walls hold more memory than the people."}, {"year": "2026", "title": "Silent Monuments", "desc": "Abandoned infrastructure as national portrait. The architecture of collective amnesia."}], "dna": {"Architecture": 85, "Nature": 20, "History": 90, "Machines": 40, "Politics": 75, "Fantasy": 10, "Decay": 80, "Perfection": 30}, "quiz": [{"question": "The best photo is?", "options": [{"text": "Composed", "val": "composed"}, {"text": "Stolen", "val": "stolen"}], "answer": "stolen"}, {"question": "Light is?", "options": [{"text": "Tool", "val": "tool"}, {"text": "Subject", "val": "subject"}], "answer": "subject"}, {"question": "A portrait should?", "options": [{"text": "Flatter", "val": "flatter"}, {"text": "Reveal", "val": "reveal"}], "answer": "reveal"}, {"question": "The city is?", "options": [{"text": "Background", "val": "background"}, {"text": "Character", "val": "character"}], "answer": "character"}, {"question": "Memory is?", "options": [{"text": "Reliable", "val": "reliable"}, {"text": "Constructed", "val": "constructed"}], "answer": "constructed"}], "artworks": [{"id": "shift-08", "title": "Last Shift 08", "archiveNum": "ARCHIVE 401", "year": "2026", "desc": "The final worker leaves the stamping plant. The lights will never turn on again. The darkness is entering the frame.", "medium": "Digital / Leica Q3", "dimensions": "6000 x 4000", "style": "art-geo-05", "category": "Photography, Documentary", "status": "Recovered", "theme": "Documentary Photography", "details": [{"type": "annotation", "caption": "Exposure log \u2014 1/15s, f/2.8, ISO 6400. The grain was preserved because it matches the texture of industrial dust."}, {"type": "annotation", "caption": "The dust is visible \u2014 in every photograph taken in that building for the last 40 years. It is the building's atmosphere."}]}, {"id": "platform-03", "title": "Platform 03", "archiveNum": "ARCHIVE 405", "year": "2025", "desc": "A subway platform at 3 AM. Two people waiting for different trains. They will never meet. The photograph is the only place they coexist.", "medium": "Digital", "dimensions": "4000 x 6000", "style": "art-geo-06", "category": "Photography, Documentary", "status": "Recovered", "theme": "Documentary Photography", "details": [{"type": "annotation", "caption": "Reflection in the platform edge \u2014 showing both subjects separated by inches and hours."}]}, {"id": "room-11", "title": "Room 11", "archiveNum": "ARCHIVE 412", "year": "2026", "desc": "An apartment emptied except for one chair. The wallpaper remembers the furniture. The light remembers the person.", "medium": "Digital", "dimensions": "5000 x 3333", "style": "art-min-01", "category": "Photography, Interior", "status": "Recovered", "theme": "Documentary Photography", "details": [{"type": "annotation", "caption": "The chair was left by the last resident \u2014 it faces a window that no longer exists."}]}, {"id": "tower-05", "title": "Tower 05", "archiveNum": "ARCHIVE 418", "year": "2025", "desc": "A cooling tower seen from the perimeter fence. The fence is newer than the tower. The tower is older than the town. Both will outlast the photograph.", "medium": "Digital / Leica Q3", "dimensions": "4000 x 6000", "style": "art-min-02", "category": "Photography, Architecture", "status": "Recovered", "theme": "Documentary Photography", "details": [{"type": "annotation", "caption": "The tower was decommissioned in 1987 \u2014 the photograph was made in 2025. The difference is 38 years of weather."}]}, {"id": "station-02", "title": "Station 02", "archiveNum": "ARCHIVE 408", "year": "2024", "desc": "A train station at 5 AM. The benches are empty. The timetable is out of date. The trains still run but no one knows where they go. The photograph is a map of a journey that has no passengers.", "medium": "Digital", "dimensions": "4000 x 6000", "style": "art-m9", "category": "Photography, Transport", "status": "Recovered", "theme": "Documentary Photography", "details": [{"type": "annotation", "caption": "The timetable shows trains to cities that have been renamed. The photograph is the only record of the old names."}]}]}, {"id": "yuki-takahashi", "name": "YUKI TAKAHASHI", "theme": "Digital Surrealism", "realmClass": "realm-yuki", "statement": "The screen is not a window. It is a membrane. On one side is the world we agree to call real. On the other is the world that has been waiting for us to look.", "influences": [{"name": "Satoshi Kon", "category": "Visual DNA", "connection": "Reality as permeable \u2014 the dissolve between dream and waking", "x": 0.3, "y": 0.3}, {"name": "Moebius", "category": "Visual DNA", "connection": "The impossible as casual \u2014 surrealism without spectacle", "x": 0.7, "y": 0.2}, {"name": "William Gibson", "category": "Intellectual Framework", "connection": "Cyberspace as landscape \u2014 data as geography", "x": 0.5, "y": 0.7}, {"name": "Vaporwave", "category": "Material Memory", "connection": "Nostalgia for a future that never arrived", "x": 0.2, "y": 0.6}, {"name": "Studio Ghibli", "category": "Visual DNA", "connection": "The spirit world as neighbor \u2014 magic as infrastructure", "x": 0.8, "y": 0.5}], "evolution": [{"year": "2014", "title": "Digital Collage", "desc": "Cutting and reassembling found images. Photoshop as scalpel."}, {"year": "2017", "title": "3D Experiments", "desc": "Building impossible spaces. The camera can go where the body cannot."}, {"year": "2021", "title": "Surreal Environments", "desc": "Full scenes with internal logic. The architecture obeys dream geometry."}, {"year": "2024", "title": "Character Worlds", "desc": "Populating environments with figures that belong there. Natives of the impossible."}, {"year": "2026", "title": "The Membrane", "desc": "Works that exist between states. A new category that has no name yet."}], "dna": {"Architecture": 70, "Nature": 45, "History": 30, "Machines": 60, "Politics": 25, "Fantasy": 95, "Decay": 50, "Perfection": 80}, "quiz": [{"question": "Reality is?", "options": [{"text": "Fixed", "val": "fixed"}, {"text": "Negotiable", "val": "negotiable"}], "answer": "negotiable"}, {"question": "The sky should be?", "options": [{"text": "Blue", "val": "blue"}, {"text": "Impossible", "val": "impossible"}], "answer": "impossible"}, {"question": "A building can?", "options": [{"text": "Stand", "val": "stand"}, {"text": "Breathe", "val": "breathe"}], "answer": "breathe"}, {"question": "Nostalgia is?", "options": [{"text": "Sad", "val": "sad"}, {"text": "Architectural", "val": "architectural"}], "answer": "architectural"}, {"question": "The digital is?", "options": [{"text": "Fake", "val": "fake"}, {"text": "Another layer", "val": "layer"}], "answer": "layer"}], "artworks": [{"id": "membrane-01", "title": "Membrane 01", "archiveNum": "ARCHIVE 501", "year": "2026", "desc": "A city where the buildings are made of light that has forgotten it was supposed to illuminate. The streets are rivers of static.", "medium": "3D render / Digital composite", "dimensions": "3840 x 2160", "style": "art-min-03", "category": "Digital, Surrealism", "status": "Recovered", "theme": "Digital Surrealism", "details": [{"type": "annotation", "caption": "Render pipeline \u2014 14.7 million polygons. HDRI of Tokyo at 3AM. The windows are refractive, not reflective."}, {"type": "annotation", "caption": "Render time \u2014 47 hours across 4 RTX 4090s. 12,000 samples. The noise is intentional."}]}, {"id": "mall-07", "title": "Abandoned Mall 07", "archiveNum": "ARCHIVE 508", "year": "2025", "desc": "A shopping mall reclaimed by a forest that does not exist in any taxonomy. The escalators grow moss that glows.", "medium": "3D render", "dimensions": "3840 x 2160", "style": "art-min-04", "category": "Digital, Environment", "status": "Recovered", "theme": "Digital Surrealism", "details": [{"type": "annotation", "caption": "Moss texture \u2014 sampled from 200-year-old temple stone, digitally reimagined."}]}, {"id": "elevator-03", "title": "Elevator 03", "archiveNum": "ARCHIVE 512", "year": "2026", "desc": "An elevator that opens onto different decades. The 1980s floor is carpeted in patterns that no longer exist. The present floor is empty.", "medium": "Digital composite", "dimensions": "2400 x 3200", "style": "art-min-05", "category": "Digital, Composite", "status": "Recovered", "theme": "Digital Surrealism", "details": [{"type": "annotation", "caption": "Composited from 47 individual photographs \u2014 spanning 1982-2026. Each floor is a decade."}]}, {"id": "skyline-02", "title": "Skyline 02", "archiveNum": "ARCHIVE 515", "year": "2025", "desc": "A city skyline where every building is a different decade. The 1920s building is next to the 2080s building. They share a wall. The wall is the present.", "medium": "3D render", "dimensions": "3840 x 2160", "style": "art-min-06", "category": "Digital, Architecture", "status": "Recovered", "theme": "Digital Surrealism", "details": [{"type": "annotation", "caption": "Each building was modeled in the architectural style of its assigned decade \u2014 then compressed into the same viewport."}]}, {"id": "city-04", "title": "City of Light 04", "archiveNum": "ARCHIVE 520", "year": "2026", "desc": "A city where the streetlights are stars. The buildings are shadows. The roads are rivers of light. The inhabitants are the patterns that the light makes on the walls. This is a city that exists only at night.", "medium": "3D render", "dimensions": "3840 x 2160", "style": "art-m10", "category": "Digital, Environment", "status": "Recovered", "theme": "Digital Surrealism", "details": [{"type": "annotation", "caption": "The stars were mapped from actual astronomical data. The city is a constellation that has been given architecture."}]}]}, {"id": "amara-okonjo", "name": "AMARA OKONJO", "theme": "Afrofuturist Textiles", "realmClass": "realm-amara", "statement": "The thread remembers what the document forgets. Pattern is code older than any alphabet. Every weave is an archive. Every textile is a civilization's autobiography written in fiber.", "influences": [{"name": "West African Kente Weaving", "category": "Material Memory", "connection": "Pattern as royal record \u2014 each design encodes proverbs and lineage", "x": 0.3, "y": 0.3}, {"name": "Octavia Butler", "category": "Intellectual Framework", "connection": "Afrofuturism as survival strategy \u2014 the future written by those who survived the past", "x": 0.7, "y": 0.7}, {"name": "Generative Art", "category": "Visual DNA", "connection": "Code as loom \u2014 algorithm as weaver of infinite patterns", "x": 0.5, "y": 0.2}, {"name": "Nigerian Indigo Dyeing", "category": "Material Memory", "connection": "The alchemy of blue \u2014 fermentation as color, time as fixative", "x": 0.2, "y": 0.6}, {"name": "El Anatsui", "category": "Visual DNA", "connection": "Found materials as monumental textile \u2014 bottle caps as mosaic memory", "x": 0.8, "y": 0.4}], "evolution": [{"year": "2013", "title": "Traditional Weaving", "desc": "Apprenticeship with master weavers in Accra. Learning that the loom is a computer that predates silicon. Every thread is a bit."}, {"year": "2016", "title": "Digital Patterns", "desc": "Translating adinkra symbols into generative code. The first time a traditional pattern reproduced itself algorithmically."}, {"year": "2020", "title": "Data Textiles", "desc": "Wearing network topology. Hoodies that map social graphs. Scarves woven from cryptocurrency transaction histories."}, {"year": "2023", "title": "Ancestral Algorithms", "desc": "Generative weaving that incorporates DNA sequences. The body's own code as pattern source."}, {"year": "2026", "title": "The Living Archive", "desc": "Textiles that change with data inputs. Garments as dynamic memory. The archive wears itself."}], "dna": {"Architecture": 40, "Nature": 60, "History": 85, "Machines": 50, "Politics": 70, "Fantasy": 80, "Decay": 30, "Perfection": 75}, "quiz": [{"question": "What is more permanent?", "options": [{"text": "Stone", "val": "stone"}, {"text": "Thread", "val": "thread"}], "answer": "thread"}, {"question": "Pattern is?", "options": [{"text": "Decoration", "val": "decoration"}, {"text": "Language", "val": "language"}], "answer": "language"}, {"question": "The future is?", "options": [{"text": "Ahead", "val": "ahead"}, {"text": "Woven", "val": "woven"}], "answer": "woven"}, {"question": "Code is?", "options": [{"text": "Logic", "val": "logic"}, {"text": "Poetry", "val": "poetry"}], "answer": "poetry"}, {"question": "A garment holds?", "options": [{"text": "Heat", "val": "heat"}, {"text": "Memory", "val": "memory"}], "answer": "memory"}], "artworks": [{"id": "ancestral-loom-03", "title": "Ancestral Loom 03", "archiveNum": "ARCHIVE 601", "year": "2026", "desc": "A generative textile that weaves ancestral patterns in real time. The loom is algorithmic. The thread is light. Each iteration reveals a pattern lost in the Middle Passage, reconstructed from genetic memory.", "medium": "Generative projection on handwoven base", "dimensions": "1800 x 2400 mm", "style": "art-tex-01", "category": "Textile, Generative", "status": "Recovered", "theme": "Afrofuturist Textiles", "details": [{"type": "annotation", "caption": "Thread count \u2014 1200 DPI. Each pixel is a fiber, each fiber carries a gene sequence."}, {"type": "annotation", "caption": "Pattern logic \u2014 adinkra symbol for sankofa rendered as recursive loop."}, {"type": "annotation", "caption": "Weave structure \u2014 8-shaft twill adapted for 21st-century digital threading."}]}, {"id": "data-cloth-07", "title": "Data Cloth 07", "archiveNum": "ARCHIVE 607", "year": "2025", "desc": "A woven network topology. Each thread is a data stream. Each knot is a server. The fabric maps the internet as a West African market \u2014 chaotic, resilient, alive with trade.", "medium": "Digital weaving, cotton and fiber optic", "dimensions": "1200 x 1800 mm", "style": "art-tex-02", "category": "Textile, Data", "status": "Recovered", "theme": "Afrofuturist Textiles", "details": [{"type": "annotation", "caption": "Fiber optic threads \u2014 carry actual light pulses. The cloth transmits real network data."}, {"type": "annotation", "caption": "Each knot encodes a server's IP address \u2014 in traditional cowrie-shell counting."}]}, {"id": "membrane-origin-01", "title": "Membrane of Origin 01", "archiveNum": "ARCHIVE 612", "year": "2026", "desc": "The boundary between digital identity and ancestral memory. A half-woven cloth where the woven half represents recorded history and the unwoven half represents everything that was lost.", "medium": "Interactive textile, embedded computation", "dimensions": "2400 x 1500 mm", "style": "art-tex-03", "category": "Textile, Interactive", "status": "Recovered", "theme": "Afrofuturist Textiles", "details": [{"type": "annotation", "caption": "The unwoven half is not empty \u2014 it contains everything we cannot yet remember."}]}, {"id": "thread-09", "title": "Thread Archive 09", "archiveNum": "ARCHIVE 615", "year": "2025", "desc": "A textile woven from threads that each carry a different story. The indigo was fermented for six months. The color is the time it took to make it.", "medium": "Handwoven, indigo dyed", "dimensions": "800 x 1200 mm", "style": "art-tex-04", "category": "Textile, Traditional", "status": "Recovered", "theme": "Afrofuturist Textiles", "details": [{"type": "annotation", "caption": "Fermentation log \u2014 the indigo vat was started on the spring equinox and harvested at the autumn equinox."}]}, {"id": "cloth-03", "title": "Cloth of Memory 03", "archiveNum": "ARCHIVE 610", "year": "2024", "desc": "A cloth woven from threads that have been unraveled from older cloths. Each thread carries the memory of the cloth it came from. The pattern is a map of all the previous patterns. The cloth is a palimpsest.", "medium": "Handwoven, natural dyes", "dimensions": "1000 x 1500 mm", "style": "art-m11", "category": "Textile, Traditional", "status": "Recovered", "theme": "Afrofuturist Textiles", "details": [{"type": "blueprint", "caption": "Thread analysis \u2014 47 distinct fiber sources, each identified by spectroscopic analysis."}]}]}, {"id": "viktor-petrov", "name": "VIKTOR PETROV", "theme": "Sonic Architecture", "realmClass": "realm-viktor", "statement": "Sound is not heard. Sound is felt. Frequency becomes form. Resonance becomes structure. A building that listens is a building that remembers. Every room is an instrument waiting for its musician.", "influences": [{"name": "Bernhard Leitner", "category": "Visual DNA", "connection": "Sound as architectural material \u2014 space composed for the ear", "x": 0.4, "y": 0.3}, {"name": "Iannis Xenakis", "category": "Intellectual Framework", "connection": "Music as mathematics \u2014 the Philips Pavilion as frozen sound", "x": 0.6, "y": 0.7}, {"name": "Cymatics", "category": "Material Memory", "connection": "Frequency made visible \u2014 sand arranging into cathedral geometries on vibrating plates", "x": 0.3, "y": 0.6}, {"name": "Brutalist Acoustics", "category": "Visual DNA", "connection": "Concrete as resonant chamber \u2014 the material sings at specific frequencies", "x": 0.8, "y": 0.2}, {"name": "Pauline Oliveros", "category": "Intellectual Framework", "connection": "Deep listening \u2014 the space between sounds as compositional material", "x": 0.5, "y": 0.5}], "evolution": [{"year": "2012", "title": "Field Recordings", "desc": "Documenting the acoustic signatures of abandoned spaces. Each empty room has a frequency. Each ruin rings at a pitch determined by its decay."}, {"year": "2015", "title": "Frequency Mapping", "desc": "Creating sonograms of architectural spaces. The first attempts to visualize what buildings sound like when no one is listening."}, {"year": "2019", "title": "Resonant Structures", "desc": "Designing spaces for specific frequencies. Rooms that amplify silence. Corridors that transform footsteps into chords."}, {"year": "2023", "title": "Audible Architectures", "desc": "Buildings that produce sound through their own structure. Wind passing through tuned cavities. Floorplates vibrating at sympathetic frequencies."}, {"year": "2026", "title": "The Listening Monument", "desc": "A permanent installation that transforms ambient city noise into harmonic architecture. The city becomes the instrument."}], "dna": {"Architecture": 95, "Nature": 20, "History": 45, "Machines": 85, "Politics": 25, "Fantasy": 60, "Decay": 50, "Perfection": 70}, "quiz": [{"question": "What is more real?", "options": [{"text": "What you see", "val": "see"}, {"text": "What you hear", "val": "hear"}], "answer": "hear"}, {"question": "Silence is?", "options": [{"text": "Empty", "val": "empty"}, {"text": "Full", "val": "full"}], "answer": "full"}, {"question": "A building should?", "options": [{"text": "Stand", "val": "stand"}, {"text": "Sing", "val": "sing"}], "answer": "sing"}, {"question": "Frequency is?", "options": [{"text": "Measurement", "val": "measurement"}, {"text": "Material", "val": "material"}], "answer": "material"}, {"question": "The best concert hall is?", "options": [{"text": "Designed", "val": "designed"}, {"text": "Discovered", "val": "discovered"}], "answer": "discovered"}], "artworks": [{"id": "frequency-monolith-04", "title": "Frequency Monolith 04", "archiveNum": "ARCHIVE 701", "year": "2026", "desc": "A standing wave frozen in resin and steel. The form was created by exposing liquid polymer to a pure 432Hz tone during curing. The monolith rings when touched \u2014 it still remembers the frequency that shaped it.", "medium": "Resin, steel, embedded transducer", "dimensions": "2200 x 600 x 600 mm", "style": "art-tex-05", "category": "Sculpture, Sound", "status": "Recovered", "theme": "Sonic Architecture", "details": [{"type": "annotation", "caption": "Surface ripple pattern \u2014 frozen at 432Hz, the frequency of the note A above middle C."}, {"type": "annotation", "caption": "Touch interaction \u2014 embedded transducer plays the original tone when the surface is contacted."}, {"type": "annotation", "caption": "Curing process \u2014 72 hours of continuous vibration at 6.5 microns amplitude."}]}, {"id": "silent-cathedral-02", "title": "Silent Cathedral 02", "archiveNum": "ARCHIVE 705", "year": "2025", "desc": "An architectural space designed for frequencies beyond human hearing. The geometry is derived from the resonant modes of a 12th-century French cathedral, transposed into ultrasonic range.", "medium": "Architectural installation, parametric concrete", "dimensions": "4000 x 4000 x 6000 mm", "style": "art-tex-06", "category": "Installation, Architecture", "status": "Recovered", "theme": "Sonic Architecture", "details": [{"type": "annotation", "caption": "Parametric concrete panels \u2014 tuned to 18kHz, the threshold of human hearing."}, {"type": "annotation", "caption": "The space is coldest at the antinodes \u2014 the temperature differential is the sound made tangible."}]}, {"id": "resonance-chamber-07", "title": "Resonance Chamber 07", "archiveNum": "ARCHIVE 712", "year": "2026", "desc": "A chamber that amplifies memory through acoustic geometry. The walls are angled to reflect sound along paths that correspond to neural pathways. Speaking in this room creates interference patterns that a listener perceives as their own memories being echoed back.", "medium": "Mixed media installation, 8-channel audio", "dimensions": "5000 x 5000 x 3500 mm", "style": "art-m1", "category": "Installation, Sound", "status": "Recovered", "theme": "Sonic Architecture", "details": [{"type": "annotation", "caption": "Wall angles calculated using the Fibonacci sequence \u2014 the golden ratio produces natural reverb times of 2.4 seconds."}, {"type": "annotation", "caption": "Acoustic panel \u2014 showing neural pathway pattern milled into recycled aluminum."}]}, {"id": "echo-01", "title": "Echo Chamber 01", "archiveNum": "ARCHIVE 715", "year": "2025", "desc": "A chamber that records and replays sound with a 30-second delay. The room becomes a conversation with your own past. The architecture is the medium.", "medium": "Steel, embedded speakers", "dimensions": "2000 x 2000 x 2000 mm", "style": "art-m2", "category": "Installation, Sound", "status": "Recovered", "theme": "Sonic Architecture", "details": [{"type": "annotation", "caption": "The delay was chosen because 30 seconds is the approximate duration of short-term memory consolidation."}]}, {"id": "sound-03", "title": "Sound Wall 03", "archiveNum": "ARCHIVE 710", "year": "2025", "desc": "A wall that produces sound when touched. The sound is different for every person. The wall has no memory of the sounds it has made. Each touch is a new composition. The wall is the instrument and the composer.", "medium": "Steel, embedded transducers", "dimensions": "5000 x 3000 x 200 mm", "style": "art-m12", "category": "Installation, Sound", "status": "Recovered", "theme": "Sonic Architecture", "details": [{"type": "annotation", "caption": "The transducers are calibrated to respond to the electrical capacitance of human skin. Each person produces a different frequency."}]}]}], "collections": [{"title": "MACHINE CIVILIZATIONS", "theme": "Systems that outlive their makers", "artistIds": ["melcher", "marcus-reed"], "count": 12}, {"title": "THE LIVING WORLD", "theme": "Nature as intelligence and witness", "artistIds": ["elena-voss", "kaito-tanaka", "amara-okonjo"], "count": 15}, {"title": "BETWEEN STATES", "theme": "Works that exist on the boundary of known categories", "artistIds": ["sara-chen", "yuki-takahashi", "viktor-petrov"], "count": 15}, {"title": "FORGOTTEN ARCHITECTURE", "theme": "Spaces built for purposes no longer remembered", "artistIds": ["melcher", "marcus-reed", "kaito-tanaka"], "count": 17}, {"title": "FREQUENCY & FORM", "theme": "Sound, signal, and the materialization of vibration", "artistIds": ["viktor-petrov", "sara-chen", "melcher"], "count": 17}, {"title": "TEXTILE MEMORY", "theme": "Woven archives and the cloth that remembers", "artistIds": ["amara-okonjo", "elena-voss", "yuki-takahashi"], "count": 15}], "processFiles": [{"id": "a-01", "name": "FILE A-01", "title": "Weave Analysis", "content": "Structural breakdown of ANCESTRAL LOOM 03. The pattern uses a modified Asante kente weave structure called 'babadua' \u2014 a thick-strip technique traditionally reserved for royalty. The digital translation introduces irregular warp tension that causes the pattern to drift by 0.3mm per meter, creating a visual analog of genetic mutation over generations. The error is not corrected. The error is the content."}, {"id": "v-01", "name": "FILE V-01", "title": "Frequency Curing Study", "content": "Documentation of the polymer curing process for FREQUENCY MONOLITH 04. The monolith was cast in 47 separate pours, each exposed to a different harmonic of 432Hz. The resulting density gradient creates an internal acoustic lens that focuses ambient sound to a point 40cm in front of the sculpture. A listener standing at this point hears sounds from across the room as if they originated inside their own skull."}, {"id": "07-a", "name": "FILE 07-A", "title": "Mobility Study", "content": "Recovered technical drawing showing the articulation system for WANDERER UNIT 07. The joint mechanism uses a tension cable system derived from suspension bridge engineering, adapted for uneven terrain traversal. Notes in margin indicate concerns about material fatigue at sub-zero temperatures. Cross-referenced with FILE 07-C."}, {"id": "07-b", "name": "FILE 07-B", "title": "Recovered Drawing", "content": "Preliminary sketch found in the archive. Pencil on water-damaged paper. The scale is ambiguous \u2014 the structure could be architectural or microscopic. The notation 'grows toward pressure' appears in the upper right corner, unsigned. Paper analysis suggests Eastern European origin, 2018-2019."}, {"id": "07-c", "name": "FILE 07-C", "title": "Structural Analysis", "content": "Load-bearing calculations for the habitat module. The design intentionally over-specifies structural integrity by 400%, suggesting the architect anticipated forces not present in known physics. Marginal note: 'Build for the earthquake that has not happened yet.'"}, {"id": "e-01", "name": "FILE E-01", "title": "Root System Map", "content": "Watercolor study of mycelial network beneath specimen oak. Color coding indicates nutrient transfer direction. Green: sucrose. Amber: phosphorous. Red: distress signal. The network extends 40 meters beyond the tree's drip line. The drawing took 14 days. The network has been active for 400 years."}, {"id": "s-01", "name": "FILE S-01", "title": "Color Deconstruction", "content": "Laboratory analysis of paint layering in EVENT 09. Cross-section sampling reveals 47 distinct applications of cadmium red, each separated by a drying period of 72-96 hours. The lower layers show increasing brittleness as the oil oxidizes \u2014 the paint is literally becoming something else over time. The aesthetic of EVENT 09 is not painted. It is the consequence of materials aging at different rates. The red that looks most violent was applied first. It has had the longest to think about what it did."}, {"id": "r-01", "name": "FILE R-01", "title": "Exposure Log", "content": "Technical annotation from LAST SHIFT 08. Shot on a Leica Q3 at 1/15s, f/2.8, ISO 6400. The shutter speed was chosen to capture motion blur in the worker's hand \u2014 the hesitation before letting go of the door frame. The high ISO introduces grain that the camera's sensor normally suppresses. The grain was preserved in post-processing because it matches the texture of the industrial dust in the air. The dust is visible in every photograph taken in that building for the last 40 years. It is the building's atmosphere. To remove the grain would be to remove the air."}, {"id": "y-01", "name": "FILE Y-01", "title": "Render Pipeline", "content": "Technical documentation for MEMBRANE 01. The scene was built in Blender 4.2 using 14.7 million polygons. The primary light source is an HDRI of Tokyo at 3AM, chosen because the city's light pollution creates a color temperature that does not exist in nature \u2014 3,200K with a magenta shift of +0.12. The windows in the buildings are not reflective. They are refractive. Each window has a material that bends light at a different angle, creating the appearance of buildings made of liquid. Render time was 47 hours across 4 RTX 4090s. 12,000 samples. The noise in the final image is not render noise. It is the simulation of quantum fluctuations in the fictional universe."}, {"id": "k-01", "name": "FILE K-01", "title": "Brush Pressure Study", "content": "Documented brush pressure across 1,000 strokes. The optimal ink load is 0.3ml for a line of 340mm. The paper absorbs at 0.02ml per second. The window for correction is 1.2 seconds. After that, the ink owns the paper."}]};
+/* ═══════════════════════════════════════════════════════════════
+   RUNTIME ENGINE
+   ═══════════════════════════════════════════════════════════════ */
+
+let currentArtist = null;
+let currentArtwork = null;
+let currentArtworkIndex = 0;
+let quizAnswers = [];
+let currentChapter = 0;
+let homeInterval = null;
+let archiveItems = [];
+
+const overlay = document.getElementById('transition-overlay');
+const plaque = document.getElementById('museum-plaque');
+const plaqueTitle = document.getElementById('plaque-title');
+const plaqueArchive = document.getElementById('plaque-archive');
+const plaqueYear = document.getElementById('plaque-year');
+const particlesCanvas = document.getElementById('particles-canvas');
+
+function transition(fn){
+  overlay.classList.add('active');
+  setTimeout(()=>{fn();window.scrollTo(0,0);setTimeout(()=>overlay.classList.remove('active'),150);},300);
+}
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const names = {'view-home':'— home —','view-archive':'archive wall','view-evidence':'evidence room','view-artists':'artists directory','view-collections':'curated collections','view-realm':'artist realm','view-know':'know the artist','view-process':'archive notes','view-about':'about'};
+  document.getElementById('footer-context').textContent = names[id] || '—';
+  if(id !== 'view-evidence' && id !== 'view-realm' && id !== 'view-know') resetRealm();
+}
+
+function setPlaque(title,archive,year){
+  plaqueTitle.textContent = title||'';
+  plaqueArchive.textContent = archive||'';
+  plaqueYear.textContent = year||'';
+}
+
+function applyRealm(artistId){
+  document.body.className = '';
+  const artist = ARCHIVE.artists.find(a=>a.id===artistId);
+  if(artist && artist.realmClass) document.body.classList.add(artist.realmClass);
+}
+
+function resetRealm(){document.body.className = '';}
+
+/* ─── PARTICLES ─── */
+function initParticles(){
+  if(!particlesCanvas) return;
+  const ctx = particlesCanvas.getContext('2d');
+  let w, h, particles = [];
+  function resize(){
+    w = particlesCanvas.width = window.innerWidth;
+    h = particlesCanvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  for(let i=0;i<40;i++){
+    particles.push({
+      x: Math.random()*w, y: Math.random()*h,
+      vx: (Math.random()-0.5)*0.15, vy: (Math.random()-0.5)*0.15,
+      r: Math.random()*1.5+0.5, o: Math.random()*0.3+0.05
+    });
+  }
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    particles.forEach(p=>{
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0) p.x = w; if(p.x > w) p.x = 0;
+      if(p.y < 0) p.y = h; if(p.y > h) p.y = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(196,184,165,${p.o})`; ctx.fill();
+    });
+    // Draw connections
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if(dist < 150){
+          ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(196,184,165,${0.05 * (1 - dist/150)})`;
+          ctx.lineWidth = 0.5; ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+initParticles();
+
+/* ─── NAVIGATION ─── */
+document.querySelectorAll('[data-nav]').forEach(link=>{
+  link.addEventListener('click',e=>{
+    e.preventDefault();
+    const target = link.dataset.nav;
+    if(target==='archive') transition(()=>{renderArchive();showView('view-archive');});
+    if(target==='artists') transition(()=>{renderArtists();showView('view-artists');});
+    if(target==='collections') transition(()=>{renderCollections();showView('view-collections');});
+    if(target==='process') transition(()=>{renderProcess();showView('view-process');});
+    if(target==='about') transition(()=>{showView('view-about');});
+  });
+});
+
+/* ─── HOME: FEATURED ROTATION ─── */
+let homeFeaturedIdx = 0;
+const homeFeaturedWorks = [
+  { artist: ARCHIVE.artists[0], artwork: ARCHIVE.artists[0].artworks[0] },
+  { artist: ARCHIVE.artists[1], artwork: ARCHIVE.artists[1].artworks[0] },
+  { artist: ARCHIVE.artists[2], artwork: ARCHIVE.artists[2].artworks[0] },
+  { artist: ARCHIVE.artists[3], artwork: ARCHIVE.artists[3].artworks[0] },
+  { artist: ARCHIVE.artists[4], artwork: ARCHIVE.artists[4].artworks[0] },
+  { artist: ARCHIVE.artists[5], artwork: ARCHIVE.artists[5].artworks[0] },
+  { artist: ARCHIVE.artists[6], artwork: ARCHIVE.artists[6].artworks[0] },
+  { artist: ARCHIVE.artists[7], artwork: ARCHIVE.artists[7].artworks[0] }
+];
+
+function showHomeFeatured(idx){
+  const feat = homeFeaturedWorks[idx];
+  const surface = document.getElementById('home-surface');
+  surface.className = 'art-surface ' + feat.artwork.style;
+  
+  document.getElementById('home-title').textContent = feat.artwork.title;
+  document.getElementById('home-subtitle').innerHTML = `${feat.artist.name} — ${feat.artwork.year}<br>${feat.artist.theme}`;
+  document.getElementById('home-featured-info').textContent = `${feat.artwork.archiveNum} · ${feat.artwork.medium}`;
+  const dots = document.querySelectorAll('#home-progress .dot');
+  dots.forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+
+function initHomeRotation(){
+  const container = document.getElementById('home-progress');
+  container.innerHTML = '';
+  homeFeaturedWorks.forEach((_,i)=>{
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i===0?' active':'');
+    dot.addEventListener('click',()=>{homeFeaturedIdx=i;showHomeFeatured(i);clearInterval(homeInterval);homeInterval=setInterval(advanceHome,5000);});
+    container.appendChild(dot);
+  });
+  showHomeFeatured(0);
+  homeInterval = setInterval(advanceHome, 5000);
+}
+
+function advanceHome(){
+  homeFeaturedIdx = (homeFeaturedIdx+1) % homeFeaturedWorks.length;
+  showHomeFeatured(homeFeaturedIdx);
+}
+
+/* Home click — enter archive */
+document.getElementById('home-artwork').addEventListener('click',()=>{
+  transition(()=>{
+    clearInterval(homeInterval);
+    currentArtist = ARCHIVE.artists[0];
+    currentArtwork = currentArtist.artworks[0];
+    currentArtworkIndex = 0;
+    applyRealm(currentArtist.id);
+    renderEvidence(currentArtist, currentArtwork);
+    showView('view-evidence');
+  });
+});
+
+/* ─── ARCHIVE WALL ─── */
+function renderArchive(){
+  const grid = document.getElementById('archive-grid');
+  grid.innerHTML = '';
+  const totalWorks = ARCHIVE.artists.reduce((s,a)=>s+a.artworks.length,0);
+  const label = document.querySelector('#view-archive .archive-section-label span');
+  if(label) label.textContent = `— ${totalWorks} pieces across ${ARCHIVE.artists.length} artists`;
+  let idx = 0;
+  archiveItems = [];
+  ARCHIVE.artists.forEach(artist=>{
+    artist.artworks.forEach(art=>{
+      const item = document.createElement('div');
+      item.className = 'archive-item';
+      item.innerHTML = `<div class="block-reveal" id="br-${idx}"><div class="art-surface ${art.style}" ></div></div><div class="archive-item-overlay"><div class="ao-artist">${artist.name}</div><div class="ao-title">${art.title}</div><div class="ao-meta"><span>${art.archiveNum}</span><span>${art.year}</span></div></div>`;
+      item.addEventListener('mouseenter',()=>{setPlaque(art.title,`${artist.name} · ${art.archiveNum}`,art.year);plaque.classList.add('visible');});
+      item.addEventListener('mouseleave',()=>plaque.classList.remove('visible'));
+      item.addEventListener('click',()=>{
+        transition(()=>{
+          currentArtist=artist; currentArtwork=art;
+          currentArtworkIndex = archiveItems.findIndex(a=>a.artwork.id===art.id);
+          applyRealm(artist.id);
+          renderEvidence(artist,art);
+          showView('view-evidence');
+        });
+      });
+      grid.appendChild(item);
+      archiveItems.push({artist, artwork: art, el: item});
+      setTimeout(()=>{const br=document.getElementById(`br-${idx}`);if(br)br.classList.add('revealed');},100+idx*60);
+      idx++;
+    });
+  });
+}
+
+/* ─── EVIDENCE ROOM ─── */
+function renderEvidence(artist, artwork){
+  document.getElementById('evidence-back').onclick = ()=>{transition(()=>{showView('view-archive');renderArchive();});};
+  document.getElementById('evidence-hero').innerHTML = `<div class="block-reveal revealed"><div class="art-surface ${artwork.style}"></div></div>`;
+  document.getElementById('evidence-title').textContent = artwork.title;
+  document.getElementById('evidence-desc').textContent = artwork.desc;
+  document.getElementById('evidence-meta').innerHTML = `<span>${artwork.medium}</span><span>${artwork.dimensions}</span><span>${artwork.year}</span><span>${artist.name}</span>`;
+
+  const details = document.getElementById('evidence-details');
+  details.innerHTML = '';
+  if(artwork.details && artwork.details.length){
+    artwork.details.forEach(d=>{
+      const div = document.createElement('div');
+      div.className = 'detail-item';
+      div.innerHTML = `<h4>${d.type.toUpperCase()}</h4><div class="detail-visual"><div class="art-surface ${artwork.style}" style="opacity:0.5;transform:scale(1.2)"></div></div><div class="detail-caption">${d.caption}</div>`;
+      details.appendChild(div);
+    });
+  }
+  const linkDiv = document.createElement('div');
+  linkDiv.className = 'evidence-artist-link';
+  linkDiv.innerHTML = `<a href="#" id="ev-know-link">KNOW THE ARTIST → ${artist.name}</a>`;
+  linkDiv.querySelector('a').addEventListener('click',e=>{e.preventDefault();transition(()=>{renderKnowArtist(artist);showView('view-know');});});
+  details.appendChild(linkDiv);
+
+  /* Previous/Next navigation */
+  document.getElementById('ev-prev').onclick = ()=>{navigateEvidence(-1);};
+  document.getElementById('ev-next').onclick = ()=>{navigateEvidence(1);};
+}
+
+function navigateEvidence(dir){
+  if(archiveItems.length === 0){
+    // Navigate within current artist's works
+    if(!currentArtist) return;
+    const works = currentArtist.artworks;
+    currentArtworkIndex = (currentArtworkIndex + dir + works.length) % works.length;
+    currentArtwork = works[currentArtworkIndex];
+  } else {
+    currentArtworkIndex = (currentArtworkIndex + dir + archiveItems.length) % archiveItems.length;
+    const item = archiveItems[currentArtworkIndex];
+    currentArtist = item.artist;
+    currentArtwork = item.artwork;
+  }
+  applyRealm(currentArtist.id);
+  renderEvidence(currentArtist, currentArtwork);
+}
+
+/* ─── ARTISTS DIRECTORY ─── */
+function renderArtists(){
+  const list = document.getElementById('artists-list');
+  list.innerHTML = '';
+  ARCHIVE.artists.forEach(artist=>{
+    const item = document.createElement('div');
+    item.className = 'artist-directory-item';
+    item.innerHTML = `<div><div class="artist-name">${artist.name}<span class="artist-count">${artist.artworks.length} works</span></div></div><div class="artist-theme">${artist.theme}</div>`;
+    item.addEventListener('click',()=>{transition(()=>{currentArtist=artist;applyRealm(artist.id);renderRealm(artist);showView('view-realm');});});
+    list.appendChild(item);
+  });
+}
+
+/* ─── COLLECTIONS ─── */
+function renderCollections(){
+  const grid = document.getElementById('collections-grid');
+  grid.innerHTML = '';
+  ARCHIVE.collections.forEach((col, ci)=>{
+    const item = document.createElement('div');
+    item.className = 'collections-item';
+    let style = 'art-cf-01';
+    const firstArtist = ARCHIVE.artists.find(a => col.artistIds.includes(a.id));
+    if(firstArtist && firstArtist.artworks.length) style = firstArtist.artworks[0].style;
+    item.innerHTML = `<div class="block-reveal" id="col-br-${ci}"><div class="art-surface ${style}"></div></div><div class="collection-overlay"><div class="collection-title">${col.title}</div><div class="collection-count">${col.theme} · ${col.count} works</div></div>`;
+    item.addEventListener('click',()=>{
+      transition(()=>{
+        const first = ARCHIVE.artists.find(a => col.artistIds.includes(a.id));
+        if(first){ currentArtist = first; currentArtwork = first.artworks[0]; applyRealm(first.id); renderRealm(first); showView('view-realm'); }
+      });
+    });
+    grid.appendChild(item);
+    setTimeout(()=>{const el=document.getElementById(`col-br-${ci}`); if(el) el.classList.add('revealed');}, 100+ci*120);
+  });
+}
+
+/* ─── REALM ─── */
+function renderRealm(artist){
+  document.getElementById('realm-name').textContent = artist.name;
+  document.getElementById('realm-theme').textContent = artist.theme;
+  document.getElementById('realm-statement').textContent = artist.statement;
+  document.getElementById('realm-know-link').onclick = e=>{e.preventDefault();transition(()=>{renderKnowArtist(artist);showView('view-know');});};
+  document.getElementById('realm-archive-link').onclick = e=>{e.preventDefault();transition(()=>{renderArchive();showView('view-archive');});};
+  const wall = document.getElementById('realm-wall');
+  wall.innerHTML = '';
+  artist.artworks.forEach((art,i)=>{
+    const item = document.createElement('div');
+    item.className = 'archive-item';
+    item.innerHTML = `<div class="block-reveal" id="rbr-${i}"><div class="art-surface ${art.style}" ></div></div><div class="archive-item-overlay"><div class="ao-title">${art.title}</div><div class="ao-meta"><span>${art.archiveNum}</span><span>${art.year}</span></div></div>`;
+    item.addEventListener('mouseenter',()=>{setPlaque(art.title,art.archiveNum,art.year);plaque.classList.add('visible');});
+    item.addEventListener('mouseleave',()=>plaque.classList.remove('visible'));
+    item.addEventListener('click',()=>{
+      transition(()=>{
+        currentArtwork=art;
+        currentArtworkIndex = artist.artworks.findIndex(a=>a.id===art.id);
+        renderEvidence(artist,art);
+        showView('view-evidence');
+      });
+    });
+    wall.appendChild(item);
+    setTimeout(()=>document.getElementById(`rbr-${i}`)?.classList.add('revealed'),100+i*100);
+  });
+}
+
+/* ─── KNOW THE ARTIST ─── */
+function renderKnowArtist(artist){
+  currentArtist = artist;
+  document.getElementById('know-subtitle').textContent = `What shaped ${artist.name}'s world?`;
+  quizAnswers = [];
+  currentChapter = 0;
+  updateKnowNav();
+  renderKnowChapters(artist);
+  showChapter(0);
+}
+
+function updateKnowNav(){
+  document.querySelectorAll('.know-nav button').forEach((btn,i)=>{
+    btn.classList.toggle('active',i===currentChapter);
+    btn.onclick = ()=>{currentChapter=i;updateKnowNav();showChapter(i);};
+  });
+}
+
+function showChapter(idx){
+  document.querySelectorAll('.know-chapter').forEach((c,i)=>c.classList.toggle('active',i===idx));
+  if(idx===0) renderConstellation(currentArtist);
+  if(idx===2) renderDNA(currentArtist);
+}
+
+function renderKnowChapters(artist){
+  const container = document.getElementById('know-chapters');
+  container.innerHTML = '';
+
+  // Chapter 0: Influences (Constellation)
+  const c0 = document.createElement('div');
+  c0.className = 'know-chapter active';
+  c0.innerHTML = `
+    <div style="text-align:center;margin-bottom:20px;font-size:12px;color:var(--institution-text-secondary);font-family:var(--realm-secondary,var(--institution-secondary));font-style:italic;">Click a node to explore its connection</div>
+    <canvas id="constellation-canvas"></canvas>
+    <div class="constellation-legend">
+      <span data-cat="Visual DNA"><span class="dot" style="background:#e5e5e5"></span> Visual DNA</span>
+      <span data-cat="Intellectual Framework"><span class="dot" style="background:#737373"></span> Intellectual Framework</span>
+      <span data-cat="Material Memory"><span class="dot" style="background:#444"></span> Material Memory</span>
+    </div>
+    <div class="constellation-info-panel" id="constellation-info">
+      <span class="cip-close" id="cip-close">✕</span>
+      <div class="cip-name" id="cip-name"></div>
+      <div class="cip-category" id="cip-category"></div>
+      <div class="cip-connection" id="cip-connection"></div>
+    </div>`;
+  container.appendChild(c0);
+
+  // Chapter 1: Timeline
+  const c1 = document.createElement('div');
+  c1.className = 'know-chapter';
+  let tl = '<div class="timeline">';
+  artist.evolution.forEach(era=>{
+    tl += `<div class="timeline-item"><div class="timeline-year">${era.year}</div><div class="timeline-title">${era.title}</div><div class="timeline-desc">${era.desc}</div></div>`;
+  });
+  tl += '</div>';
+  c1.innerHTML = tl;
+  container.appendChild(c1);
+
+  // Chapter 2: DNA
+  const c2 = document.createElement('div');
+  c2.className = 'know-chapter';
+  c2.id = 'chapter-dna';
+  container.appendChild(c2);
+
+  // Chapter 3: Quiz
+  const c3 = document.createElement('div');
+  c3.className = 'know-chapter';
+  c3.id = 'chapter-quiz';
+  container.appendChild(c3);
+  renderQuiz(artist);
+
+  // Chapter 4: Genealogy
+  const c4 = document.createElement('div');
+  c4.className = 'know-chapter';
+  let gen = '<div class="genealogy-list">';
+  if(currentArtwork && currentArtwork.genealogy && currentArtwork.genealogy.length){
+    currentArtwork.genealogy.forEach(g=>{
+      gen += `<div class="genealogy-item"><div class="genealogy-type">${g.type}</div><div class="genealogy-name">${g.name}</div><div class="genealogy-kind">${g.kind}</div></div>`;
+    });
+  } else {
+    artist.influences.forEach(inf=>{
+      gen += `<div class="genealogy-item"><div class="genealogy-type">${inf.category}</div><div class="genealogy-name">${inf.name}</div><div class="genealogy-kind">${inf.connection.substring(0,60)}...</div></div>`;
+    });
+  }
+  gen += '</div>';
+  c4.innerHTML = gen;
+  container.appendChild(c4);
+}
+
+/* ─── CONSTELLATION CANVAS ─── */
+function renderConstellation(artist){
+  const canvas = document.getElementById('constellation-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio||1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width*dpr;
+  canvas.height = rect.height*dpr;
+  ctx.scale(dpr,dpr);
+  const w = rect.width, h = rect.height;
+
+  const nodes = artist.influences.map(inf=>({
+    x: inf.x*w, y: inf.y*h, r: 6,
+    name: inf.name, category: inf.category, connection: inf.connection,
+    vx: (Math.random()-0.5)*0.2, vy: (Math.random()-0.5)*0.2,
+    baseR: 6
+  }));
+  const center = {x:w/2,y:h/2,r:12};
+  let mouse = {x:0,y:0}, hoveredNode = null, pulse = 0;
+
+  canvas.addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;});
+
+  canvas.addEventListener('click',()=>{
+    if(hoveredNode){
+      document.getElementById('cip-name').textContent = hoveredNode.name;
+      document.getElementById('cip-category').textContent = hoveredNode.category;
+      document.getElementById('cip-connection').textContent = hoveredNode.connection;
+      document.getElementById('constellation-info').classList.add('visible');
+    }
+  });
+
+  document.getElementById('cip-close').onclick = ()=>{
+    document.getElementById('constellation-info').classList.remove('visible');
+  };
+
+  function getColor(cat, alpha=1){
+    if(cat==='Visual DNA') return `rgba(229,229,229,${alpha*0.9})`;
+    if(cat==='Intellectual Framework') return `rgba(196,184,165,${alpha*0.9})`;
+    return `rgba(68,68,68,${alpha*0.9})`;
+  }
+
+  function animate(){
+    pulse += 0.02;
+    ctx.clearRect(0,0,w,h);
+
+    // Center node glow
+    const glow = ctx.createRadialGradient(center.x, center.y, 0, center.x, center.y, 60);
+    glow.addColorStop(0, 'rgba(229,229,229,0.06)');
+    glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow; ctx.fillRect(0,0,w,h);
+
+    // Lines from center to nodes
+    nodes.forEach(node=>{
+      ctx.beginPath(); ctx.moveTo(center.x, center.y); ctx.lineTo(node.x, node.y);
+      ctx.strokeStyle = 'rgba(196,184,165,0.12)'; ctx.lineWidth = 0.8; ctx.stroke();
+    });
+
+    // Center node
+    const centerPulse = 10 + Math.sin(pulse)*2;
+    ctx.beginPath(); ctx.arc(center.x, center.y, centerPulse, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(229,229,229,0.85)'; ctx.fill();
+    ctx.fillStyle = '#c4b8a5'; ctx.font='10px IBM Plex Mono'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('ARTIST', center.x, center.y);
+
+    // Influence nodes
+    hoveredNode = null;
+    nodes.forEach(node=>{
+      node.x += node.vx; node.y += node.vy;
+      if(node.x<25||node.x>w-25)node.vx*=-1;
+      if(node.y<25||node.y>h-25)node.vy*=-1;
+      const dx=mouse.x-node.x, dy=mouse.y-node.y;
+      const dist = Math.sqrt(dx*dx+dy*dy);
+      const isHovered = dist < 18;
+      if(isHovered) hoveredNode=node;
+
+      const pulseR = node.baseR + (isHovered ? 4 : Math.sin(pulse + node.x*0.01)*1.5);
+      ctx.beginPath(); ctx.arc(node.x, node.y, pulseR, 0, Math.PI*2);
+      ctx.fillStyle = getColor(node.category, isHovered ? 1 : 0.7);
+      ctx.fill();
+
+      if(isHovered){
+        ctx.fillStyle = 'var(--realm-text,var(--institution-text))';
+        ctx.font='11px IBM Plex Mono'; ctx.textAlign='center';
+        ctx.fillText(node.name, node.x, node.y + pulseR + 16);
+        // Glow ring
+        ctx.beginPath(); ctx.arc(node.x, node.y, pulseR+4, 0, Math.PI*2);
+        ctx.strokeStyle = 'rgba(229,229,229,0.15)'; ctx.lineWidth = 1; ctx.stroke();
+      }
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+}
+
+/* ─── DNA ─── */
+function renderDNA(artist){
+  const container = document.getElementById('chapter-dna');
+  if(!container) return;
+  let html = '<div class="dna-grid">';
+  Object.entries(artist.dna).forEach(([key,val])=>{
+    html += `<div class="dna-item"><h4>${key}</h4><div class="dna-bar-track"><div class="dna-bar-fill" style="width:0%" data-width="${val}%"></div></div><div class="dna-value">${val}%</div></div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+  setTimeout(()=>{container.querySelectorAll('.dna-bar-fill').forEach(bar=>{bar.style.width=bar.dataset.width;});},100);
+}
+
+/* ─── QUIZ ─── */
+function renderQuiz(artist){
+  const container = document.getElementById('chapter-quiz');
+  if(!container || !artist.quiz) return;
+  let qIdx = 0;
+  function showQuestion(){
+    if(qIdx >= artist.quiz.length){showResult();return;}
+    const q = artist.quiz[qIdx];
+    let opts = '';
+    q.options.forEach(opt=>{opts+=`<div class="quiz-option" data-val="${opt.val}">${opt.text}</div>`;});
+    container.innerHTML = `<div class="quiz-container"><div class="quiz-question">${q.question}</div><div class="quiz-options">${opts}</div><div style="margin-top:40px;font-size:10px;color:var(--institution-text-secondary);letter-spacing:0.1em;">QUESTION ${qIdx+1} / ${artist.quiz.length}</div></div>`;
+    container.querySelectorAll('.quiz-option').forEach(opt=>{
+      opt.addEventListener('click',()=>{quizAnswers.push(opt.dataset.val);qIdx++;showQuestion();});
+    });
+  }
+  function showResult(){
+    let correct = 0;
+    quizAnswers.forEach((ans,i)=>{if(ans===artist.quiz[i].answer)correct++;});
+    const pct = Math.round((correct/artist.quiz.length)*100);
+    let interpretation = pct > 80 ? 'Your cognitive patterns closely mirror this artist. You share their instincts about space, material, and meaning. You would understand their decisions before they made them.' :
+      pct > 50 ? 'You diverge in key ways, but share foundational sensibilities. The differences are as illuminating as the similarities. You are a visitor who understands the language but speaks with a different accent.' :
+      'You approach the world through a different architecture. This artist expands the boundaries of what you might value. The gap between your thinking is a space worth exploring.';
+    container.innerHTML = `<div class="quiz-container"><div class="quiz-result"><div class="alignment-label">You think like this artist:</div><div class="alignment">${pct}%</div><div class="interpretation">${interpretation}</div></div></div>`;
+  }
+  showQuestion();
+}
+
+/* ─── PROCESS ─── */
+function renderProcess(){
+  const list = document.getElementById('process-files');
+  list.innerHTML = '';
+  ARCHIVE.processFiles.forEach(file=>{
+    const item = document.createElement('div');
+    item.className = 'process-file';
+    item.innerHTML = `<div class="process-file-header"><div><div style="font-size:10px;letter-spacing:0.1em;color:var(--institution-text-secondary);margin-bottom:4px;">${file.name}</div><div class="process-file-name">${file.title}</div></div><div class="process-file-meta">RECOVERED DOCUMENT <span class="process-file-expand">+</span></div></div><div class="process-file-body"><div class="process-file-content">${file.content}</div></div>`;
+    item.addEventListener('click',()=>item.classList.toggle('open'));
+    list.appendChild(item);
+  });
+}
+
+/* ─── KEYBOARD NAVIGATION ─── */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    const active = document.querySelector('.view.active');
+    if(active){
+      if(active.id === 'view-evidence' || active.id === 'view-realm' || active.id === 'view-know'){
+        transition(()=>{showView('view-archive');renderArchive();});
+      } else if(active.id !== 'view-home'){
+        transition(()=>{showView('view-home');clearInterval(homeInterval);homeInterval=setInterval(advanceHome,5000);});
+      }
+    }
+  }
+  if(e.key === 'ArrowLeft'){
+    const active = document.querySelector('.view.active');
+    if(active && active.id === 'view-evidence'){navigateEvidence(-1);e.preventDefault();}
+  }
+  if(e.key === 'ArrowRight'){
+    const active = document.querySelector('.view.active');
+    if(active && active.id === 'view-evidence'){navigateEvidence(1);e.preventDefault();}
+  }
+});
+
+/* ─── INIT ─── */
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    document.querySelector('#home-artwork .block-reveal')?.classList.add('revealed');
+    initHomeRotation();
+  }, 300);
+});
+</script>
+</body>
+</html>

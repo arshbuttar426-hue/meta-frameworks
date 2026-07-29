@@ -1,0 +1,202 @@
+[
+  {
+    "model": "SmolLM3-3B",
+    "task": "follow",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 100,
+    "output": "<think>\n\n</think>\nhello world",
+    "time": 0.3,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "follow",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 200,
+    "output": "<think>\n\n</think>\nhello world",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "follow",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 300,
+    "output": "<think>\n\n</think>\nhello world",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "follow",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 400,
+    "output": "<think>\n\n</think>\nhello world",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "follow",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 500,
+    "output": "<think>\n\n</think>\nHello world",
+    "time": 0.2,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "list_json",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 100,
+    "output": "<think>\n\n</think>\n```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "list_json",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 200,
+    "output": "<think>\n\n</think>\n```json\n[\"red\", \"green\", \"blue\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "list_json",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 300,
+    "output": "<think>\n\n</think>\n```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "list_json",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 400,
+    "output": "<think>\n\n</think>\n```json\n[\"red\", \"blue\", \"yellow\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "list_json",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 500,
+    "output": "<think>\n\n</think>\n```json\n[\"red\", \"blue\", \"green\"]\n```",
+    "time": 0.4,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "sentence",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 100,
+    "output": "<think>\n\n</think>\nThe sleek black cat lounged lazily on the sun-warmed windowsill, its eyes half-closed in contentment as it watched the world outside pass by.",
+    "time": 0.7,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "sentence",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 200,
+    "output": "<think>\n\n</think>\nThe sleek black cat lounged lazily on the sun-warmed windowsill, its eyes half-closed in contentment as it purred softly to itself.",
+    "time": 0.7,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "sentence",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 300,
+    "output": "<think>\n\n</think>\nThe sleek black cat lounged contentedly on the sun-warmed windowsill, its eyes half-closed in a deep slumber.",
+    "time": 0.6,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "sentence",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 400,
+    "output": "<think>\n\n</think>\nThe sleek black cat with emerald green eyes lounged gracefully on the sun-drenched windowsill, its tail curling effortlessly around a silk scarf.",
+    "time": 0.7,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "sentence",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 500,
+    "output": "<think>\n\n</think>\nMy pet is an elegant black-and-white tabby, with large expressive eyes that sparkle when she purrs.",
+    "time": 0.6,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "explain",
+    "temp": 0.1,
+    "top_p": 0.5,
+    "tokens": 100,
+    "output": "<think>\n\n</think>\nRecursion is a programming technique where a function calls itself repeatedly until it reaches a base case that stops the recursion, allowing the program to solve complex problems by breaking them down into simpler instances of the same problem. This method can lead to elegant and efficient solutions for certain types of algorithms.",
+    "time": 1.2,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "explain",
+    "temp": 0.1,
+    "top_p": 0.9,
+    "tokens": 200,
+    "output": "<think>\n\n</think>\nRecursion is a programming technique where a function calls itself repeatedly until it reaches a base case that stops the recursion, allowing the computation to terminate and return a result. This method can be used for solving problems with overlapping subproblems or naturally recursive structures like tree traversals or factorial calculations.",
+    "time": 1.1,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "explain",
+    "temp": 0.5,
+    "top_p": 0.7,
+    "tokens": 300,
+    "output": "<think>\n\n</think>\nRecursion is a programming technique where a function calls itself repeatedly until it reaches a base case that stops the recursion, allowing the program to solve complex problems by breaking them down into simpler instances of the same problem. This method can lead to elegant and efficient solutions for certain types of algorithms.",
+    "time": 1.2,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "explain",
+    "temp": 0.7,
+    "top_p": 0.9,
+    "tokens": 400,
+    "output": "<think>\n\n</think>\nRecursion is a programming technique where a function solves a problem by breaking it down into smaller instances of the same problem, until reaching a base case that can be solved directly, and then combining these solutions to find the final answer. This approach allows for elegant and efficient coding in certain scenarios, though it may lead to stack overflow if not properly managed due to repeated calls on the call stack.",
+    "time": 1.5,
+    "ok": true
+  },
+  {
+    "model": "SmolLM3-3B",
+    "task": "explain",
+    "temp": 1.2,
+    "top_p": 0.95,
+    "tokens": 500,
+    "output": "<think>\n\n</think>\nRecursion is a programming technique where a function calls itself, either directly or indirectly, to solve a problem by breaking it down into smaller instances of the same problem until reaching a base case that can be solved without further recursion.\n\nThis method enables functions to tackle problems with no clear beginning or end points because the recursive process continues indefinitely until specific conditions (the base cases) are met.",
+    "time": 1.5,
+    "ok": true
+  }
+]
